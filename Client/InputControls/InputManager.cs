@@ -60,11 +60,11 @@ public class InputManager : MonoBehaviour
         {
             instance = this;
         }
-        else
+        else if (InstanceFinder.Input_Manager())
         {
             // Instance already created so destroy
             DebugSystem.Log("Instance found! Destroying...", LogType.Error, this);
-            Destroy(this);
+            Destroy(gameObject);
         }
 
         if (mainControls == null)
@@ -78,8 +78,8 @@ public class InputManager : MonoBehaviour
 
     private void OnDisable()
     {
-        instance = null;        // clear instance
         DisableManager();
+        instance = null;        // clear instance
         DebugSystem.Log("Input Manager Destroyed...", LogType.Debug);
     }
 
@@ -87,6 +87,9 @@ public class InputManager : MonoBehaviour
 
     protected private void StartupManager()
     {
+        if (instance = null)
+            return;
+
         // define inputs
         cMove = mainControls.Player.Move;
         cLook = mainControls.Player.Look;
@@ -138,6 +141,9 @@ public class InputManager : MonoBehaviour
 
     protected private void DisableManager()
     {
+        if (instance = null)
+            return;
+
         // enable inputs
         cMove.Disable();
         cLook.Disable();

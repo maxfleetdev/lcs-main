@@ -23,6 +23,7 @@ public class InputManager : MonoBehaviour
     private InputAction cAim;
     private InputAction cStrafe;
     private InputAction cChange;
+    private InputAction cDebugConsole;
 
     // Exposed Properties //
     public static InputManager Instance
@@ -46,6 +47,7 @@ public class InputManager : MonoBehaviour
     public Action OnMap;
     public Action OnRun;
     public Action OnAim;
+    public Action OnDebugConsole;
 
     public Action<float> OnStrafe;           // pos/neg value
     public Action<float> OnChange;
@@ -60,6 +62,7 @@ public class InputManager : MonoBehaviour
         {
             instance = this;
         }
+
         else if (InstanceFinder.Input_Manager())
         {
             // Instance already created so destroy
@@ -87,9 +90,6 @@ public class InputManager : MonoBehaviour
 
     protected private void StartupManager()
     {
-        if (instance = null)
-            return;
-
         // define inputs
         cMove = mainControls.Player.Move;
         cLook = mainControls.Player.Look;
@@ -102,6 +102,7 @@ public class InputManager : MonoBehaviour
         cAim = mainControls.Player.Aim;
         cStrafe = mainControls.Player.Strafe;
         cChange = mainControls.Player.Change;
+        cDebugConsole = mainControls.Player.DebugConsole;
 
         // enable inputs
         cMove.Enable();
@@ -115,6 +116,7 @@ public class InputManager : MonoBehaviour
         cAim.Enable();
         cStrafe.Enable();
         cChange.Enable();
+        cDebugConsole.Enable();
 
         // define events
         cMove.started += ctx => OnMoveStart?.Invoke(cMove.ReadValue<Vector3>());        // move events
@@ -132,6 +134,7 @@ public class InputManager : MonoBehaviour
         cMap.performed += ctx => OnMap?.Invoke();
         cRun.performed += ctx => OnRun?.Invoke();
         cAim.performed += ctx => OnAim?.Invoke();
+        cDebugConsole.performed += ctx => OnDebugConsole?.Invoke();
 
         cStrafe.performed += ctx => OnStrafe?.Invoke(cStrafe.ReadValue<float>());       // float events (-1, 1)
         cChange.performed += ctx => OnChange?.Invoke(cChange.ReadValue<float>());
@@ -141,9 +144,6 @@ public class InputManager : MonoBehaviour
 
     protected private void DisableManager()
     {
-        if (instance = null)
-            return;
-
         // enable inputs
         cMove.Disable();
         cLook.Disable();
@@ -156,6 +156,7 @@ public class InputManager : MonoBehaviour
         cAim.Disable();
         cStrafe.Disable();
         cChange.Disable();
+        cDebugConsole.Disable();
 
         // define events
         cMove.started -= ctx => OnMoveStart?.Invoke(cMove.ReadValue<Vector3>());        // move events
@@ -173,6 +174,7 @@ public class InputManager : MonoBehaviour
         cMap.performed -= ctx => OnMap?.Invoke();
         cRun.performed -= ctx => OnRun?.Invoke();
         cAim.performed -= ctx => OnAim?.Invoke();
+        cDebugConsole.performed -= ctx => OnDebugConsole?.Invoke();
 
         cStrafe.performed -= ctx => OnStrafe?.Invoke(cStrafe.ReadValue<float>());       // float events (-1, 1)
         cChange.performed -= ctx => OnChange?.Invoke(cChange.ReadValue<float>());

@@ -19,4 +19,21 @@ public static class InstanceFinder
             return null;
         }
     }
+
+    /// <summary>
+    /// Returns the instanced Debug Console
+    /// </summary>
+    /// <returns></returns>
+    public static DebugConsole Debug_Console()
+    {
+        if (DebugConsole.Instance != null)
+        {
+            return DebugConsole.Instance;
+        }
+        else
+        {
+            DebugSystem.Log("DebugConsole not found! Returning null...", LogType.Error);
+            return null;
+        }
+    }
 }

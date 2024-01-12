@@ -125,6 +125,15 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DebugConsole"",
+                    ""type"": ""Button"",
+                    ""id"": ""5064469f-4921-4a68-898c-e15dfa106440"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -611,6 +620,17 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
                     ""action"": ""Change"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e3f8ef20-f583-4deb-803d-1198e817a33a"",
+                    ""path"": ""<Keyboard>/f10"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""DebugConsole"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1207,6 +1227,7 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
         m_Player_Aim = m_Player.FindAction("Aim", throwIfNotFound: true);
         m_Player_Strafe = m_Player.FindAction("Strafe", throwIfNotFound: true);
         m_Player_Change = m_Player.FindAction("Change", throwIfNotFound: true);
+        m_Player_DebugConsole = m_Player.FindAction("DebugConsole", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1291,6 +1312,7 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Aim;
     private readonly InputAction m_Player_Strafe;
     private readonly InputAction m_Player_Change;
+    private readonly InputAction m_Player_DebugConsole;
     public struct PlayerActions
     {
         private @MainControls m_Wrapper;
@@ -1306,6 +1328,7 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
         public InputAction @Aim => m_Wrapper.m_Player_Aim;
         public InputAction @Strafe => m_Wrapper.m_Player_Strafe;
         public InputAction @Change => m_Wrapper.m_Player_Change;
+        public InputAction @DebugConsole => m_Wrapper.m_Player_DebugConsole;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1348,6 +1371,9 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
             @Change.started += instance.OnChange;
             @Change.performed += instance.OnChange;
             @Change.canceled += instance.OnChange;
+            @DebugConsole.started += instance.OnDebugConsole;
+            @DebugConsole.performed += instance.OnDebugConsole;
+            @DebugConsole.canceled += instance.OnDebugConsole;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1385,6 +1411,9 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
             @Change.started -= instance.OnChange;
             @Change.performed -= instance.OnChange;
             @Change.canceled -= instance.OnChange;
+            @DebugConsole.started -= instance.OnDebugConsole;
+            @DebugConsole.performed -= instance.OnDebugConsole;
+            @DebugConsole.canceled -= instance.OnDebugConsole;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1578,6 +1607,7 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
         void OnAim(InputAction.CallbackContext context);
         void OnStrafe(InputAction.CallbackContext context);
         void OnChange(InputAction.CallbackContext context);
+        void OnDebugConsole(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

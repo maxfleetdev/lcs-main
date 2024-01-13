@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -45,7 +46,10 @@ public class InputManager : MonoBehaviour
     public Action OnInventory;
     public Action OnPause;
     public Action OnMap;
-    public Action OnRun;
+
+    public Action OnRunStart;
+    public Action OnRunEnd;
+
     public Action OnAim;
     public Action OnDebugConsole;
 
@@ -119,20 +123,23 @@ public class InputManager : MonoBehaviour
         cDebugConsole.Enable();
 
         // define events
-        cMove.started += ctx => OnMoveStart?.Invoke(cMove.ReadValue<Vector3>());        // move events
-        cMove.performed += ctx => OnMoving?.Invoke(cMove.ReadValue<Vector3>());
-        cMove.canceled += ctx => OnMoveEnd?.Invoke(cMove.ReadValue<Vector3>());
+        cMove.started += ctx => OnMoveStart?.Invoke(cMove.ReadValue<Vector2>());        // move events
+        cMove.performed += ctx => OnMoving?.Invoke(cMove.ReadValue<Vector2>());
+        cMove.canceled += ctx => OnMoveEnd?.Invoke(cMove.ReadValue<Vector2>());
 
-        cLook.started += ctx => OnLookStart?.Invoke(cLook.ReadValue<Vector3>());        // look events
-        cLook.performed += ctx => OnLooking?.Invoke(cLook.ReadValue<Vector3>());
-        cLook.canceled += ctx => OnLookEnd?.Invoke(cLook.ReadValue<Vector3>());
+        cLook.started += ctx => OnLookStart?.Invoke(cLook.ReadValue<Vector2>());        // look events
+        cLook.performed += ctx => OnLooking?.Invoke(cLook.ReadValue<Vector2>());
+        cLook.canceled += ctx => OnLookEnd?.Invoke(cLook.ReadValue<Vector2>());
 
         cFire.performed += ctx => OnFire?.Invoke();                                     // action events
         cInteract.performed += ctx => OnInteract?.Invoke();
         cInventory.performed += ctx => OnInventory?.Invoke();
         cPause.performed += ctx => OnPause?.Invoke();
         cMap.performed += ctx => OnMap?.Invoke();
-        cRun.performed += ctx => OnRun?.Invoke();
+
+        cRun.started += ctx => OnRunStart?.Invoke();
+        cRun.canceled += ctx => OnRunEnd?.Invoke();
+
         cAim.performed += ctx => OnAim?.Invoke();
         cDebugConsole.performed += ctx => OnDebugConsole?.Invoke();
 
@@ -159,20 +166,23 @@ public class InputManager : MonoBehaviour
         cDebugConsole.Disable();
 
         // define events
-        cMove.started -= ctx => OnMoveStart?.Invoke(cMove.ReadValue<Vector3>());        // move events
-        cMove.performed -= ctx => OnMoving?.Invoke(cMove.ReadValue<Vector3>());
-        cMove.canceled -= ctx => OnMoveEnd?.Invoke(cMove.ReadValue<Vector3>());
+        cMove.started -= ctx => OnMoveStart?.Invoke(cMove.ReadValue<Vector2>());        // move events
+        cMove.performed -= ctx => OnMoving?.Invoke(cMove.ReadValue<Vector2>());
+        cMove.canceled -= ctx => OnMoveEnd?.Invoke(cMove.ReadValue<Vector2>());
 
-        cLook.started -= ctx => OnLookStart?.Invoke(cLook.ReadValue<Vector3>());        // look events
-        cLook.performed -= ctx => OnLooking?.Invoke(cLook.ReadValue<Vector3>());
-        cLook.canceled -= ctx => OnLookEnd?.Invoke(cLook.ReadValue<Vector3>());
+        cLook.started -= ctx => OnLookStart?.Invoke(cLook.ReadValue<Vector2>());        // look events
+        cLook.performed -= ctx => OnLooking?.Invoke(cLook.ReadValue<Vector2>());
+        cLook.canceled -= ctx => OnLookEnd?.Invoke(cLook.ReadValue<Vector2>());
 
         cFire.performed -= ctx => OnFire?.Invoke();                                     // action events
         cInteract.performed -= ctx => OnInteract?.Invoke();
         cInventory.performed -= ctx => OnInventory?.Invoke();
         cPause.performed -= ctx => OnPause?.Invoke();
         cMap.performed -= ctx => OnMap?.Invoke();
-        cRun.performed -= ctx => OnRun?.Invoke();
+
+        cRun.started -= ctx => OnRunStart?.Invoke();
+        cRun.canceled -= ctx => OnRunEnd?.Invoke();
+
         cAim.performed -= ctx => OnAim?.Invoke();
         cDebugConsole.performed -= ctx => OnDebugConsole?.Invoke();
 

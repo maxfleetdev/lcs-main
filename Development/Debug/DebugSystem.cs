@@ -44,9 +44,9 @@ public static class DebugSystem
         // Format final message to send to console
         string log_to_send;
         if (source == null)
-            log_to_send = $"<color={color}>{message}</color>";
+            log_to_send = $"{message}";
         else
-            log_to_send = $"<color={color}>{source.name}@{message}</color>";
+            log_to_send = $"{source.name}@{message}";
 
         // Send message to console
         switch (type)

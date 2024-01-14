@@ -8,14 +8,19 @@ using UnityEngine.SceneManagement;
 
 public class Bootstrapper : MonoBehaviour
 {
+    // Private //
     [SerializeField] private GameObject[] gameManagers;
 
     private static Bootstrapper instance;
+
+    // Public Properties //
     public static Bootstrapper Instance
     {
         get => instance;
         private set => instance = value;
     }
+
+    #region Scene Management
 
     private void OnEnable()
     {
@@ -60,4 +65,6 @@ public class Bootstrapper : MonoBehaviour
         DebugSystem.Log("Main menu loaded... OK", LogType.Debug);
         return;
     }
+
+    #endregion
 }

@@ -5,6 +5,9 @@
     Only for development & testing purposes.
  */
 
+/// <summary>
+/// Sets infinite health for player
+/// </summary>
 public class GodMode : ICommand
 {
     public void Execute(string command, string[] parameters)
@@ -20,6 +23,9 @@ public class GodMode : ICommand
     }
 }
 
+/// <summary>
+/// Changes the health of the current Player
+/// </summary>
 public class HealthCommand : ICommand
 {
     public void Execute(string command, string[] parameters)
@@ -32,5 +38,26 @@ public class HealthCommand : ICommand
         }
 
         DebugSystem.Log($"Setting health to {healthValue}.", LogType.Info);
+    }
+}
+
+/// <summary>
+/// Changes the view of the player from first to third person
+/// True = First Person View
+/// False = Third Person View
+/// </summary>
+public class ViewCommand : ICommand
+{
+    public void Execute(string command, string[] parameters)
+    {
+        // check format and check for command
+        if (command.ToLower() != "firstperson" || parameters.Length != 1 || !bool.TryParse(parameters[0], out bool isFirstPerson))
+        {
+            DebugSystem.Log("Invalid firstperson command format. Use 'firstperson=[true/false]'.", LogType.Warn);
+            return;
+        }
+
+        DebugSystem.Log($"firstperson set to {isFirstPerson}.", LogType.Info);
+        InstanceFinder.Player_Movement().ChangeView(isFirstPerson);
     }
 }

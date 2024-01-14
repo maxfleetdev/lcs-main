@@ -36,4 +36,18 @@ public static class InstanceFinder
             return null;
         }
     }
+
+    public static PlayerMovement Player_Movement()
+    {
+        if (PlayerMovement.Instance != null)
+        {
+            return PlayerMovement.Instance;
+        }
+
+        else
+        {
+            DebugSystem.Log("PlayerMovement not found! Returning null...", LogType.Error);
+            return null;
+        }
+    }
 }

@@ -11,11 +11,17 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     // Serialised Vars //
+    [Header("Movement")]
     [SerializeField] private float walkSpeed = 3f;
     [SerializeField] private float runSpeed = 6f;
+    [SerializeField] private float turnSpeed = 90f;
+
+    [Header("Camera")]
+    [SerializeField] private Camera firstPersonCam;
+    [SerializeField] private float sensitivity = 0.1f;
 
     // Class-only //
-    private PlayerMovement instance;
+    private static PlayerMovement instance;
     private InputManager inputManager;
 
     protected private CharacterController charController;
@@ -27,13 +33,15 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded = false;
     private bool isRunning = false;
 
+    private float rotationX;
+
     // Public Properties //
     public bool IsFirstPerson
     {
         get => isFirstPerson;
         private set => isFirstPerson = value;
     }
-    public PlayerMovement Instance
+    public static PlayerMovement Instance
     {
         get => instance;
         private set => instance = value;
@@ -94,10 +102,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        // Changes Movement based on choice //
+        // Changes Movement based on view //
         if (isFirstPerson)
         {
             FirstPersonMove();
+            CameraLook();
         }
 
         else
@@ -109,20 +118,77 @@ public class PlayerMovement : MonoBehaviour
         ///////////////////////////////////
         // Move Logic for both 1st & 3rd //
         ///////////////////////////////////
-
+        
+        // grounded
+        // clamp speed
+        // collision
+        // etc
     }
+
+    #region Third-Person Logic
 
     protected private void ThirdPersonMove()
     {
-        float move_speed = isRunning ? runSpeed : walkSpeed;        // check if sprinting
+        // basic input //
+        float move_speed = isRunning ? runSpeed : walkSpeed;
         float input_x = moveInput.x;
         float input_y = moveInput.y;
+
+        // tank controls //
+        transform.Rotate(0, input_x * turnSpeed * Time.deltaTime, 0);
+        Vector3 movDir = transform.forward * input_y * move_speed;
+        charController.Move(movDir * Time.deltaTime);
     }
+    
+    #endregion
+
+    #region First-Person Logic
 
     protected private void FirstPersonMove()
     {
-
+        if (!isFirstPerson)
+            return;
     }
+
+    protected private void CameraLook()
+    {
+        if (!isFirstPerson)
+            return;
+
+        // Input //
+        float view_x = lookInput.x;
+        float view_y = lookInput.y;
+
+        // Camera Look Angles //
+        rotationX -= view_y * sensitivity;
+        rotationX = Mathf.Clamp(rotationX, -90f, 90f);
+
+        // Update Transform //
+        firstPersonCam.transform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
+        transform.rotation *= Quaternion.Euler(0f, view_x * sensitivity, 0f);
+    }
+
+    #endregion
+
+    #region View Logic
+
+    public void ChangeView(bool view)
+    {
+        isFirstPerson = view;
+        firstPersonCam.enabled = view;
+
+        if (isFirstPerson)
+        {
+            
+        }
+
+        else
+        {
+            
+        }
+    }
+
+    #endregion
 
     #region Input Events
 

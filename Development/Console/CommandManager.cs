@@ -36,9 +36,11 @@ public class CommandManager : MonoBehaviour
         // Initialize the command dictionary
         commandDictionary = new Dictionary<string, ICommand>
         {
-            { "godmode", new GodMode() },
-            {"health", new HealthCommand() }
-            // Add more commands as needed
+            {"godmode", new GodMode() },
+            {"health", new HealthCommand() },
+            {"firstperson", new ViewCommand() }
+
+            // more commands here
         };
     }
 

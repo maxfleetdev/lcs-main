@@ -26,7 +26,12 @@ public class DebugPrintLog : MonoBehaviour
 
     protected private void HandleLog(string condition, string stackTrace, UnityEngine.LogType type)
     {
-        myLogQueue.Enqueue($"[{type}]: {condition}");
+        string warn_type = string.Empty;
+        if (type == UnityEngine.LogType.Error ||  type == UnityEngine.LogType.Warning)
+        {
+            warn_type = $"[{type}]:";
+        }
+        myLogQueue.Enqueue($"{warn_type}{condition}");
         if (type == UnityEngine.LogType.Exception)
         {
             myLogQueue.Enqueue(stackTrace);

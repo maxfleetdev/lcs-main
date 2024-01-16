@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MathsLib : MonoBehaviour
+public class MathsLib
 {
     #region Quick Sort Algorithm
 

@@ -1,117 +1,76 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /*
-    Interaction manager is in-charge of interacting within the world.
-    It simply sends an event to the interacted object. This works the same
-    for both first and third person.
-
-    Uses OverlapSphere to cast rays to nearby objects (rank in distance).
+ * #1 Use overlapshere to find nearby objects with interact layer
+ * #2 Send ray to closest object to check if it's visible
+ * #3 Yes > Make closest object
+ * #4 No > Go to next object
+ * #5 If close enough, then interact with object
  */
 
 public class InteractionManager : MonoBehaviour
 {
-    // Serializable //
-    [SerializeField] private float searchRange = 4f;
-    [SerializeField] private float rayLength = 2f;
-    [SerializeField] private LayerMask interactLayer;
+    [SerializeField] private LayerMask interactMask;
+    [SerializeField] private float rayDistance = 2f;
+    [SerializeField] private float searchRadius = 4f;
     [SerializeField] private Transform originPoint;
 
-    // Class-only //
-    protected private List<GameObject> nearbyObjects = new List<GameObject>();
-    
-    private InputManager inputManager;
-    private bool canInteract = false;
-    private GameObject objectFound = null;
-
-    #region Runtime/Startup
-
-    private void Start()
-    {
-        inputManager = InstanceFinder.Input_Manager();
-        nearbyObjects.Clear();
-
-        inputManager.OnInteract += OnInteracted;
-    }
-
-    private void OnDisable()
-    {
-        inputManager.OnInteract -= OnInteracted;
-    }
+    private GameObject closestObject;
+    private int maxTargets = 10;
 
     private void FixedUpdate()
     {
-        FindNearbyObjects();
+        SearchForObjects();
     }
 
-    #endregion
-
-    private void FindNearbyObjects()
+    private void SearchForObjects()
     {
-        Collider[] nearby_objects = Physics.OverlapSphere(originPoint.position, searchRange, interactLayer); // initial search
-        if (nearby_objects.Length == 0)
+        Vector3 origin = originPoint.position;
+        Collider[] near_objects = new Collider[maxTargets];
+        int found_count = Physics.OverlapSphereNonAlloc(origin, searchRadius, near_objects, interactMask);
+        if (found_count == 0)
         {
-            objectFound = null;
+            closestObject = null;
             return;
         }
 
-        Vector3 origin = originPoint.position;
-        foreach (Collider collider in nearby_objects)
+        float closest_distance = float.MaxValue;
+        foreach(Collider collider in near_objects)
         {
-            // Raycast to the found objects //
-            Vector3 obj_pos = collider.transform.position;
-            GameObject found_object = collider.gameObject;
-            if (Physics.Raycast(origin, obj_pos - origin, rayLength, interactLayer))
+            if (collider == null)
             {
-                if (!nearbyObjects.Contains(found_object))
-                {
-                    nearbyObjects.Add(found_object);
-                }
+                continue;
+            }
+            Vector3 dir = collider.transform.position;
+            float distance = Vector3.Distance(origin, collider.transform.position);
+            if (distance < closest_distance)
+            {
+                closest_distance = distance;
+                closestObject = collider.gameObject;
             }
 
-            // If not detected remove from nearby object //
-            else if (nearbyObjects.Contains(found_object))
+            if (collider != closestObject)
             {
-                nearbyObjects.Remove(found_object);
+                Debug.DrawRay(origin, dir - origin, Color.red);
             }
         }
-
-        if (nearbyObjects.Count >= 1)
-        {
-            MathsLib.Sort(nearbyObjects, originPoint.position);       // sort list [closest>furthest]
-            objectFound = nearbyObjects[0];
-            canInteract = true;
-        }
-
-        else
-        {
-            objectFound = null;
-            canInteract = false;
-        }
     }
-
-
-    #region InputEvents
-
-    private void OnInteracted()
-    {
-
-    }
-
-    #endregion
 
     private void OnDrawGizmosSelected()
     {
-        // Draw Search Range //
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(originPoint.position, searchRange);
+        Gizmos.DrawWireSphere(originPoint.position, searchRadius);
 
-        // Draw Ray to Object //
-        if (canInteract)
+        if (closestObject != null)
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(originPoint.position, objectFound.transform.position);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(closestObject.transform.position, 0.25f);
+            
+            Gizmos.color = Color.green;
+            Vector3 origin = originPoint.transform.position;
+            Vector3 closest = closestObject.transform.position;
+            Gizmos.DrawRay(origin, closest - origin);
         }
     }
 }

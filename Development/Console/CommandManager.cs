@@ -38,7 +38,7 @@ public class CommandManager : MonoBehaviour
         {
             {"godmode", new GodMode() },
             {"health", new HealthCommand() },
-            {"firstperson", new ViewCommand() }
+            {"fpview", new ViewCommand() }
 
             // more commands here
         };
@@ -56,6 +56,7 @@ public class CommandManager : MonoBehaviour
     {
         previousCmd = cmd;
         OnCommandClear();
+        DebugSystem.Log($">{previousCmd}", LogType.Debug);
 
         // Split the command into components
         string[] cmdParts = cmd.Split('=');

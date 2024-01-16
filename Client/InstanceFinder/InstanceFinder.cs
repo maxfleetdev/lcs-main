@@ -50,4 +50,32 @@ public static class InstanceFinder
             return null;
         }
     }
+
+    public static MainCameraController Camera_Controller()
+    {
+        if (MainCameraController.Instance != null)
+        {
+            return MainCameraController.Instance;
+        }
+
+        else
+        {
+            DebugSystem.Log("CameraController not found! Returning null...", LogType.Error);
+            return null;
+        }
+    }
+
+    public static CameraManager Camera_Manager()
+    {
+        if (CameraManager.Instance != null)
+        {
+            return CameraManager.Instance;
+        }
+
+        else
+        {
+            DebugSystem.Log("CameraManager not found! Returning null...", LogType.Error);
+            return null;
+        }
+    }
 }

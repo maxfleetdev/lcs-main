@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /*
@@ -29,8 +27,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 moveInput = Vector2.zero;
     private Vector2 lookInput = Vector2.zero;
 
-    private bool isFirstPerson = false;
-    private bool isGrounded = false;
+    private bool isFirstPerson = true;
     private bool isRunning = false;
 
     private float rotationX;
@@ -62,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
         charController = GetComponent<CharacterController>();
 
         SetupEvents();
+        ChangeView(isFirstPerson);
     }
 
     private void OnDisable()
@@ -130,9 +128,19 @@ public class PlayerMovement : MonoBehaviour
     protected private void ThirdPersonMove()
     {
         // basic input //
-        float move_speed = isRunning ? runSpeed : walkSpeed;
         float input_x = moveInput.x;
         float input_y = moveInput.y;
+        float move_speed;
+
+        // can't run backwards
+        if (input_y > 0)
+        {
+            move_speed = isRunning ? runSpeed : walkSpeed;
+        }
+        else
+        {
+            move_speed = walkSpeed;
+        }
 
         // tank controls //
         transform.Rotate(0, input_x * turnSpeed * Time.deltaTime, 0);
@@ -148,6 +156,16 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!isFirstPerson)
             return;
+
+        // basic input //
+        float move_speed = isRunning ? runSpeed : walkSpeed;
+        float input_x = moveInput.x;
+        float input_y = moveInput.y;
+
+        // fps controls //
+        Vector3 movDir = new Vector3(input_x, 0, input_y) * move_speed;
+        movDir = transform.TransformDirection(movDir);
+        charController.Move(movDir * Time.deltaTime);
     }
 
     protected private void CameraLook()
@@ -175,16 +193,17 @@ public class PlayerMovement : MonoBehaviour
     public void ChangeView(bool view)
     {
         isFirstPerson = view;
-        firstPersonCam.enabled = view;
 
         if (isFirstPerson)
         {
-            
+            firstPersonCam.gameObject.SetActive(true);
+            InstanceFinder.Camera_Controller().ToggleCamera(false);
         }
 
         else
         {
-            
+            firstPersonCam.gameObject.SetActive(false);
+            InstanceFinder.Camera_Controller().ToggleCamera(true);
         }
     }
 

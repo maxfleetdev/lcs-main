@@ -51,13 +51,13 @@ public class ViewCommand : ICommand
     public void Execute(string command, string[] parameters)
     {
         // check format and check for command
-        if (command.ToLower() != "firstperson" || parameters.Length != 1 || !bool.TryParse(parameters[0], out bool isFirstPerson))
+        if (command.ToLower() != "fpview" || parameters.Length != 1 || !bool.TryParse(parameters[0], out bool isFirstPerson))
         {
             DebugSystem.Log("Invalid firstperson command format. Use 'firstperson=[true/false]'.", LogType.Warn);
             return;
         }
 
-        DebugSystem.Log($"firstperson set to {isFirstPerson}.", LogType.Info);
+        DebugSystem.Log($"FirstPerson set to {isFirstPerson}.", LogType.Info);
         InstanceFinder.Player_Movement().ChangeView(isFirstPerson);
     }
 }

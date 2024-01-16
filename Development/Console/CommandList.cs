@@ -61,3 +61,18 @@ public class ViewCommand : ICommand
         InstanceFinder.Player_Movement().ChangeView(isFirstPerson);
     }
 }
+
+public class ClearCommand : ICommand
+{
+    public void Execute(string command, string[] parameters)
+    {
+        // check format and check for command
+        if (command.ToLower() != "clear" || parameters.Length != 1 || !bool.TryParse(parameters[0], out bool isFirstPerson))
+        {
+            DebugSystem.Log("Invalid clear command format. Use 'clear=[true/false]'.", LogType.Warn);
+            return;
+        }
+
+        DebugSystem.ClearConsole();
+    }
+}

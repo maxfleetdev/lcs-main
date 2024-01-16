@@ -38,7 +38,8 @@ public class CommandManager : MonoBehaviour
         {
             {"godmode", new GodMode() },
             {"health", new HealthCommand() },
-            {"fpview", new ViewCommand() }
+            {"fpview", new ViewCommand() },
+            {"clear", new ClearCommand() }
 
             // more commands here
         };

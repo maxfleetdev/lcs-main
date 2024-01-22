@@ -1,3 +1,6 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
 /// <summary>
 /// Used to find all instances within the LCS codebase
 /// </summary>
@@ -77,5 +80,27 @@ public static class InstanceFinder
             DebugSystem.Log("CameraManager not found! Returning null...", LogType.Error);
             return null;
         }
+    }
+
+    public static MainInventory Main_Inventory()
+    {
+        if (MainInventory.Instance != null)
+        {
+            return MainInventory.Instance;
+        }
+
+        else
+        {
+            DebugSystem.Log("MainInventory not found! Returning null...", LogType.Error);
+            return null;
+        }
+    }
+
+
+
+    // DEBUG TEST
+    static private void ReloadBootstrapper()
+    {
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
 }

@@ -13,7 +13,6 @@ using UnityEngine;
 public class InteractionManager : MonoBehaviour
 {
     [SerializeField] private LayerMask interactMask;
-    [SerializeField] private float rayDistance = 2f;
     [SerializeField] private float searchRadius = 4f;
     [SerializeField] private Transform originPoint;
 
@@ -98,8 +97,8 @@ public class InteractionManager : MonoBehaviour
         EventHandler handler = found[0].transform.GetComponent<EventHandler>();
         if (handler != null)
         {
+            GameObject interact_obj = handler.gameObject;
             handler.PlayerInteracted();
-            DebugSystem.Log("Interacting...", LogType.Debug);
         }
     }
 

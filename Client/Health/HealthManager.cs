@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HealthManager : MonoBehaviour
@@ -53,27 +51,26 @@ public class HealthManager : MonoBehaviour
 
     #region Health Logic
 
-    // Amount of health removed is multiplied by difficulty rating
-
     public void RemoveHealth(int amount)
     {
+        float multi = InstanceFinder.Game_Manager().SelectedDifficulty.DamageTakeMultiplier;
+        amount = Mathf.RoundToInt(amount * multi);          // new damage taken depending on difficulty
         int diff = health - amount;
         if (diff > 0)
         {
             health -= amount;
+            DebugSystem.Log($"Removed {amount} of health", LogType.Debug);
         }
-
         else
         {
             health = 0;
-
-            // death logic here
+            // DEATH LOGIC //
+            // death animation
             // game over
             // load previous save
-            // death animation
-            // etc...
+            // etc...      //
+            DebugSystem.Log($"Player is dead", LogType.Debug);
         }
-
         OnHealthChange?.Invoke();
     }
 
@@ -90,6 +87,7 @@ public class HealthManager : MonoBehaviour
             health += amount;
         }
 
+        DebugSystem.Log($"Added {amount} of health! Now {health}", LogType.Debug);
         OnHealthChange?.Invoke();
     }
 

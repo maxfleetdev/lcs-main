@@ -18,4 +18,15 @@ public class DifficultySetting : ScriptableObject
     [SerializeField] private float damageHitMultiplier;
 
     [SerializeField] private DifficultyType difficultyType;     // not sure if needed
+
+    public float DamageTakeMultiplier
+    {
+        get => damageTakeMultiplier;
+        private set => damageHitMultiplier = value;
+    }
+    public float DamageHitMultiplier
+    {
+        get => damageHitMultiplier;
+        private set => damageHitMultiplier = value;
+    }
 }

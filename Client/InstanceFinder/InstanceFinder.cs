@@ -1,6 +1,3 @@
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
 /// <summary>
 /// Used to find all instances within the LCS codebase
 /// </summary>
@@ -106,6 +103,20 @@ public static class InstanceFinder
         else
         {
             DebugSystem.Log("HealthManager not found! Returning null...", LogType.Error);
+            return null;
+        }
+    }
+
+    public static GameManager Game_Manager()
+    {
+        if (GameManager.Instance != null)
+        {
+            return GameManager.Instance;
+        }
+
+        else
+        {
+            DebugSystem.Log("GameManager not found! Returning null...", LogType.Error);
             return null;
         }
     }

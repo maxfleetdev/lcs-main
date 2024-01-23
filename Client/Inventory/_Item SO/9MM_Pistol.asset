@@ -17,4 +17,5 @@ MonoBehaviour:
   itemModel: {fileID: 0}
   type: 0
   addAmount: 1
-  itemUseAmount: 20
+  itemUseAmount: 0
+  weaponData: {fileID: 11400000, guid: 2e0968cc6db15b84bbda36e77c22f9f2, type: 2}

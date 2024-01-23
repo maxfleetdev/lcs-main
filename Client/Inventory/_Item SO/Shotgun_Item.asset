@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8a0a435f9937db49955ea242a8fd508, type: 3}
-  m_Name: Shot
+  m_Name: Shotgun_Item
   m_EditorClassIdentifier: 
-  itemName: 9MM Pistol
-  itemDescription: A low power pistol
+  itemName: Pump Shotgun
+  itemDescription: A high power shotgun
   itemModel: {fileID: 0}
   type: 0
   addAmount: 1
-  itemUseAmount: 20
+  itemUseAmount: 0
+  weaponData: {fileID: 11400000, guid: d294fb3c0ecbcc049b079a0d3c7c2b2f, type: 2}

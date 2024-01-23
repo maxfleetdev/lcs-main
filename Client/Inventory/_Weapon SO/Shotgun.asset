@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Shotgun
   m_EditorClassIdentifier: 
   damagePerHit: 75
-  ammoPerClip: 4
+  ammoPerClip: 5

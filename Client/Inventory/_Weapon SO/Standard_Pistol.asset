@@ -9,11 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8a0a435f9937db49955ea242a8fd508, type: 3}
-  m_Name: FirstAidKit
+  m_Script: {fileID: 11500000, guid: 2ee795a02e00d21409cb26ad07b7e454, type: 3}
+  m_Name: Standard_Pistol
   m_EditorClassIdentifier: 
-  itemName: Health Kit
-  itemDescription: Replenishes Full Health
-  itemModel: {fileID: 0}
-  type: 2
-  addAmount: 1
+  damagePerHit: 25
+  ammoPerClip: 16

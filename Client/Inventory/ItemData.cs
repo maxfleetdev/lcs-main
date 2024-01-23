@@ -11,7 +11,14 @@ public class ItemData : ScriptableObject
 
     [Header("Item Logic")]
     [SerializeField] private ItemType type;
+    [Tooltip("Amount to add to inventory")]
     [SerializeField] private int addAmount;
+    [Tooltip("Amount to add/remove to x system per use")]
+    [SerializeField] private int itemUseAmount;
+
+    [Header("Weapon Logic")]
+    [Tooltip("Applicable if a weapon")]
+    [SerializeField] private WeaponData weaponData;
 
 
     // Public Properties //
@@ -39,5 +46,39 @@ public class ItemData : ScriptableObject
     {
         get => addAmount; 
         private set => addAmount = value;
+    }
+    public int ItemUseAmount
+    {
+        get => ItemUseAmount;
+        private set => ItemUseAmount = value;
+    }
+
+
+    // Item Functions //
+
+    /// <summary>
+    /// Adds health to the user
+    /// </summary>
+    public void AddHealth()
+    {
+        if (type == ItemType.Health)
+        {
+            HealthManager hm = InstanceFinder.Health_Manager();
+            MainInventory mi = InstanceFinder.Main_Inventory();
+            hm.AddHealth(itemUseAmount);
+            mi.RemoveItem(this, itemUseAmount);         // maybe not needed
+        }
+    }
+
+    /// <summary>
+    /// Removes ammo from the main inventory
+    /// </summary>
+    public void UseAmmo()
+    {
+        if (type == ItemType.Ammo)
+        {
+            MainInventory mi = InstanceFinder.Main_Inventory();
+            mi.RemoveItem(this, itemUseAmount);
+        }
     }
 }

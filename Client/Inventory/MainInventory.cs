@@ -67,6 +67,8 @@ public class MainInventory : MonoBehaviour
 
     #region Inventory Logic
 
+    // PUBLIC LOGIC //
+
     /// <summary>
     /// Adds the passed value to Inventory. Pass amount for custom add amount
     /// </summary>
@@ -103,8 +105,8 @@ public class MainInventory : MonoBehaviour
         if (inventory.ContainsKey(data))
         {
             // only remove 1
-            int new_amount = inventory[data] - amount;
-            if (new_amount >= 1)
+            int diff = inventory[data] - amount;
+            if (diff >= 1)
             {
                 RemoveAmount(data, amount);
             }
@@ -114,7 +116,6 @@ public class MainInventory : MonoBehaviour
             {
                 inventory.Remove(data);
             }
-
             DebugSystem.Log($"Removed {data.ItemName} by {amount}", LogType.Debug);
         }
 
@@ -129,6 +130,7 @@ public class MainInventory : MonoBehaviour
     }
 
 
+    // PROTECTED LOGIC //
 
     /// <summary>
     /// Adds x quantity of an item

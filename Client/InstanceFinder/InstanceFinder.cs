@@ -96,11 +96,17 @@ public static class InstanceFinder
         }
     }
 
-
-
-    // DEBUG TEST
-    static private void ReloadBootstrapper()
+    public static HealthManager Health_Manager()
     {
-        SceneManager.LoadScene(0, LoadSceneMode.Single);
+        if (HealthManager.Instance != null)
+        {
+            return HealthManager.Instance;
+        }
+
+        else
+        {
+            DebugSystem.Log("HealthManager not found! Returning null...", LogType.Error);
+            return null;
+        }
     }
 }

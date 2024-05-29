@@ -1,12 +1,9 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using UnityEngine.SceneManagement;
-using System;
 
 public class PlaytestMenu : MonoBehaviour
 {
-    private static Scene scene;
     [MenuItem("Tools/Debug/Playtest _F5")]
     private static void Play()
     {

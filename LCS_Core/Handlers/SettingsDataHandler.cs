@@ -10,11 +10,11 @@ public static class SettingsDataHandler
 
     public static void LoadSettings()
     {
-        OnSettingsSave?.Invoke();
+        OnSettingsLoad?.Invoke();
     }
 
     public static void SaveSettings()
     {
-        OnSettingsLoad?.Invoke();
+        OnSettingsSave?.Invoke();
     }
 }

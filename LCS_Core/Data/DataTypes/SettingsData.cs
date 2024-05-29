@@ -27,6 +27,9 @@ public class SettingsData
         this.MasterVolume = 1.0f;
         this.MusicVolume = 1.0f;
         this.SfxVolume = 1.0f;
+        
+        this.VideoResolution = new Vector2Int(1920, 1080);
+        this.Vsync = true;
         this.FPSLock = 60;
 
         this.CRTEffect = true;

@@ -15,6 +15,7 @@ public class SaveFileEditor : MonoBehaviour
     [SerializeField] private TextMeshProUGUI savedText;
     [Space]
     [SerializeField] private GameObject confirmationScreen;
+    [SerializeField] private GameObject saveScreen;
     [Space]
     [SerializeField] private EventSystem eventSystem;
 
@@ -28,6 +29,7 @@ public class SaveFileEditor : MonoBehaviour
     private void OnEnable()
     {
         confirmationScreen.SetActive(false);
+        saveScreen.SetActive(true);
         PopulateSaves();
         newSaveData.OnSubmit += NewSave;
     }
@@ -82,7 +84,6 @@ public class SaveFileEditor : MonoBehaviour
             GameDataSave data_save = button.GetComponent<GameDataSave>();
             if (data_save == null)
                 continue;
-            print(data.DataIndex);
             data_save.Construct(data);
             data_save.OnSelected += GameDataSelected;
             data_save.OnSubmit += ConfirmOverwrite;
@@ -119,6 +120,7 @@ public class SaveFileEditor : MonoBehaviour
     // Asks for user confirmation
     private void ConfirmOverwrite()
     {
+        saveScreen.SetActive(false);
         confirmationScreen.SetActive(true);
     }
 
@@ -128,11 +130,12 @@ public class SaveFileEditor : MonoBehaviour
         if (choice)
         {
             GameDataHandler.SaveData(selectedGameData.DataIndex);
-            PopulateSaves();
+            GUIHandler.HideGUI();
+            return;
         }
+        PopulateSaves();
         confirmationScreen.SetActive(false);
-        
-        GUIHandler.HideGUI();
+        saveScreen.SetActive(true);
     }
 
     private void NewSave()

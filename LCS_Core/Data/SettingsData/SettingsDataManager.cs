@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace LCS
@@ -6,18 +8,20 @@ namespace LCS
     {
         public class SettingsDataManager : MonoBehaviour
         {
+            private List<ISettingsObject> settingObjects = new List<ISettingsObject>();
+
             #region Startup
 
             private void Awake()
             {
                 SettingsDataHandler.OnSettingsSave += SaveSettingsToDisk;
-                SettingsDataHandler.OnSettingsSave += LoadSettingsFromDisk;
+                SettingsDataHandler.OnSettingsLoad += LoadSettingsFromDisk;
             }
 
             private void OnDisable()
             {
                 SettingsDataHandler.OnSettingsSave -= SaveSettingsToDisk;
-                SettingsDataHandler.OnSettingsSave -= LoadSettingsFromDisk;
+                SettingsDataHandler.OnSettingsLoad -= LoadSettingsFromDisk;
             }
 
             #endregion
@@ -27,29 +31,59 @@ namespace LCS
             private void SaveSettingsToDisk()
             {
                 SettingsDataFinder writer = new SettingsDataFinder();
-                writer.SaveSettings(SaveSettings());
+                SettingsData data = SaveSettings();
+                writer.SaveSettings(data);
             }
 
             private void LoadSettingsFromDisk()
             {
                 SettingsDataFinder loader = new SettingsDataFinder();
-                LoadSettings(loader.LoadSettings());
+                SettingsData data = loader.LoadSettings();
+                LoadSettings(data);
             }
 
             #endregion
 
-            // Gets all objects which adjust settings (music manager, volume, mixer etc)
-            // returns settingsdata
+            #region Get/Inject Events
+
+            private void CacheObjects()
+            {
+                settingObjects.Clear();
+                IEnumerable<ISettingsObject> persistence_objects = FindObjectsOfType<MonoBehaviour>().
+                    OfType<ISettingsObject>();
+                foreach (ISettingsObject mono in persistence_objects)
+                {
+                    settingObjects.Add(mono);
+                }
+            }
+
             private SettingsData SaveSettings()
             {
-                return new SettingsData();
+                SettingsData data = new SettingsData();
+                CacheObjects();
+                foreach (ISettingsObject obj in settingObjects)
+                {
+                    obj.GetSetting(data);
+                }
+                return data;
             }
 
-            // Loads all objects which adjust settings (music manager, volume, mixer etc)
             private void LoadSettings(SettingsData settings)
             {
-
+                if (settings == null)
+                {
+                    SaveSettingsToDisk();
+                    LoadSettingsFromDisk();
+                    return;
+                }
+                CacheObjects();
+                foreach (ISettingsObject obj in settingObjects)
+                {
+                    obj.InjectSetting(settings);
+                }
             }
+
+            #endregion
         }
     }
 }

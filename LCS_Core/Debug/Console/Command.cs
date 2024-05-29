@@ -72,6 +72,14 @@ public static class Command
                 SceneManager.LoadScene(0, LoadSceneMode.Single);
                 break;
 
+            case "s_save":
+                SettingsDataHandler.SaveSettings();
+                break;
+
+            case "s_load":
+                SettingsDataHandler.LoadSettings();
+                break;
+
             default:
                 Debugger.LogConsole($"Unknown Command: {command.Name.ToLower()}", 0);
                 break;

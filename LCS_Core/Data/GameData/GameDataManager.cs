@@ -47,11 +47,21 @@ namespace LCS
 
             private void SaveScene(int index)
             {
-                // Generic Information
-                GameData data = new GameData();
-                data.DataIndex = index;
+                // Load Writer
+                gameDataWriter = new GameDataFinder(index);
+                GameData data = gameDataWriter.LoadData();
+                
+                // Creates new GameData
+                if (data == null)
+                {
+                    data = new GameData();
+                    data.DataIndex = index;
+                }
+
+                // Save Game Information
                 data.SaveLocation = SaveCache.GetSaveLocation();
                 data.SaveTime = System.DateTime.Now.ToString();
+                data.SaveAmount++;
 
                 // Find all scene objects
                 CacheObjects();
@@ -61,7 +71,6 @@ namespace LCS
                 }
 
                 // Save GameData
-                gameDataWriter = new GameDataFinder(data.DataIndex);
                 gameDataWriter.SaveData(data);
             }
 

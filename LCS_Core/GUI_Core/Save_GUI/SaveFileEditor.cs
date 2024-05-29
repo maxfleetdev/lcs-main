@@ -12,6 +12,7 @@ public class SaveFileEditor : MonoBehaviour
     [SerializeField] private TextMeshProUGUI dataText;
     [SerializeField] private TextMeshProUGUI timeText;
     [SerializeField] private TextMeshProUGUI difficultyText;
+    [SerializeField] private TextMeshProUGUI savedText;
     [Space]
     [SerializeField] private GameObject confirmationScreen;
     [Space]
@@ -81,6 +82,7 @@ public class SaveFileEditor : MonoBehaviour
             GameDataSave data_save = button.GetComponent<GameDataSave>();
             if (data_save == null)
                 continue;
+            print(data.DataIndex);
             data_save.Construct(data);
             data_save.OnSelected += GameDataSelected;
             data_save.OnSubmit += ConfirmOverwrite;
@@ -106,23 +108,8 @@ public class SaveFileEditor : MonoBehaviour
         }
         timeText.text = selectedGameData.SaveTime;
         dataText.text = $"Data {selectedGameData.DataIndex}";
-        string dif = string.Empty;
-        switch (selectedGameData.GameDifficulty)
-        {
-            case DifficultyType.DIFFICULTY_EASY:
-                dif = "Easy";
-                break;
-            case DifficultyType.DIFFICULTY_MEDIUM:
-                dif = "Normal";
-                break;
-            case DifficultyType.DIFFICULTY_HARD:
-                dif = "Hard";
-                break;
-            case DifficultyType.DIFFICULTY_INSANE:
-                dif = "Insane";
-                break;
-        }
-        difficultyText.text = dif;
+        difficultyText.text = DifficultyCache.RetrieveDifficulty(selectedGameData.GameDifficulty).DifficultyName;
+        savedText.text = $"Save {selectedGameData.SaveAmount}";
     }
 
     #endregion

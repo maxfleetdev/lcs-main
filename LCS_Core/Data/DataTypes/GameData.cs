@@ -7,6 +7,7 @@ public class GameData
     public string SaveLocation;             // Used by SavePoints to save the location name (eg. House, Hospital etc)
     public string SaveTime;                 // The time and date it was last saved
     public int DataIndex;                   // Used for the amount of saves, first save is 1, second is 2 etc
+    public int SaveAmount;
     public DifficultyType GameDifficulty;
 
     // PLAYER DATA
@@ -31,6 +32,7 @@ public class GameData
         this.SaveLocation = "NULL";
         this.SaveTime = System.DateTime.Now.ToString();
         this.DataIndex = 0;
+        this.SaveAmount = 0;
         this.GameDifficulty = DifficultyType.DIFFICULTY_MEDIUM;
 
         this.PlayerPositon = Vector3.zero;

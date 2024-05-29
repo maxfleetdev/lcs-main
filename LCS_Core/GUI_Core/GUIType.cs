@@ -1,0 +1,17 @@
+public enum GUIType
+{
+    // DEVELOPMENT
+    GUI_DEBUG,
+    
+    // INGAME
+    GUI_SAVE_GAME,
+    GUI_PICKUP,
+    GUI_DIALOGUE,
+    GUI_INVENTORY,
+    GUI_MAP,
+    GUI_SETTINGS,
+
+    // MENUS
+    GUI_LOAD_GAME,
+    GUI_MAIN_MENU
+}

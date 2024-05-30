@@ -5,15 +5,16 @@ using UnityEngine.EventSystems;
 
 public class SaveFileEditor : MonoBehaviour
 {
+    [Header("Script Fields")]
     [SerializeField] private GameObject saveFileButton;
     [SerializeField] private Transform contentLocation;
     [SerializeField] private NewGameDataSave newSaveData;
-    [Space]
+    [Header("Text Fields")]
     [SerializeField] private TextMeshProUGUI dataText;
     [SerializeField] private TextMeshProUGUI timeText;
     [SerializeField] private TextMeshProUGUI difficultyText;
     [SerializeField] private TextMeshProUGUI savedText;
-    [Space]
+    [Header("GUI Fields")]
     [SerializeField] private GameObject confirmationScreen;
     [SerializeField] private GameObject saveScreen;
     [Space]

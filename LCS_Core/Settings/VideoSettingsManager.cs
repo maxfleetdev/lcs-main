@@ -16,14 +16,14 @@ public class VideoSettingsManager : MonoBehaviour, ISettingsObject
 
     #region Load/Save
 
-    public void InjectSetting(SettingsData settings)
+    public void LoadSetting(SettingsData settings)
     {
         if (settings == null) return;
         gameSettings = settings;
         ApplySettings();
     }
 
-    public void GetSetting(SettingsData settings)
+    public void SaveSetting(SettingsData settings)
     {
         settings.VideoResolution = new Vector2Int(Screen.width, Screen.height);
         settings.Vsync = QualitySettings.vSyncCount > 0 ? true : false;

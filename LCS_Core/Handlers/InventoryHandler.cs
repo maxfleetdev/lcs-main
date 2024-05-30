@@ -16,11 +16,16 @@ public static class InventoryHandler
     public static event Action<int, int> OnItemRemove;
 
     /// <summary>
-    /// Called upon GUI Response
+    /// Called upon a GUI Response
     /// </summary>
     public static event Action<bool> OnPickupChoice;
 
-    // ItemData -> Inventory
+    // Calls and Returns current inventory slots
+    public static event Action OnInventoryRequest;
+    public static event Action<Slot[]> OnInventoryReply;
+
+    #region Inventory Calls
+
     public static void AddItem(int item_id, int amount)
     {
         if (amount <= 0)
@@ -31,7 +36,6 @@ public static class InventoryHandler
         OnItemPickup?.Invoke(item_id, amount);
     }
 
-    // ItemData -> Inventory
     public static void RemoveItem(int item_id, int amount)
     {
         if (amount < 0)
@@ -46,9 +50,25 @@ public static class InventoryHandler
         OnItemRemove?.Invoke(item_id, amount);
     }
 
-    // GUI -> Inventory
     public static void PickupAction(bool choice)
     {
         OnPickupChoice?.Invoke(choice);
     }
+
+    public static void RequestInventory()
+    {
+        OnInventoryRequest?.Invoke();
+    }
+
+    #endregion
+
+    #region Inventory Replies
+
+    // Inventory -> All Listeners
+    public static void AllInventoryReply(Slot[] slots)
+    {
+        OnInventoryReply?.Invoke(slots);
+    }
+
+    #endregion
 }

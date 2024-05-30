@@ -63,7 +63,7 @@ namespace LCS
                 CacheObjects();
                 foreach (ISettingsObject obj in settingObjects)
                 {
-                    obj.GetSetting(data);
+                    obj.SaveSetting(data);
                 }
                 return data;
             }
@@ -79,7 +79,7 @@ namespace LCS
                 CacheObjects();
                 foreach (ISettingsObject obj in settingObjects)
                 {
-                    obj.InjectSetting(settings);
+                    obj.LoadSetting(settings);
                 }
             }
 

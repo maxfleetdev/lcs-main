@@ -1,5 +1,5 @@
 public interface ISettingsObject
 {
-    public void GetSetting(SettingsData settings);
-    public void InjectSetting(SettingsData settings);
+    public void SaveSetting(SettingsData settings);
+    public void LoadSetting(SettingsData settings);
 }

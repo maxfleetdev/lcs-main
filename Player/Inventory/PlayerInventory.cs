@@ -13,12 +13,14 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
     {
         InventoryHandler.OnItemPickup += AddToInventory;
         InventoryHandler.OnItemRemove += RemoveFromInventory;
+        InventoryHandler.OnInventoryRequest += GetAllSlots;
     }
 
     private void OnDisable()
     {
         InventoryHandler.OnItemPickup -= AddToInventory;
         InventoryHandler.OnItemRemove -= RemoveFromInventory;
+        InventoryHandler.OnInventoryRequest -= GetAllSlots;
     }
 
     #endregion
@@ -147,6 +149,11 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
             }
         }
         return null;
+    }
+
+    private void GetAllSlots()
+    {
+        InventoryHandler.AllInventoryReply(inventorySlots.ToArray());
     }
 
     #endregion

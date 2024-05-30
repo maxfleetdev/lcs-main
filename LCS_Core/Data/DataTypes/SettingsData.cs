@@ -9,6 +9,7 @@ public class SettingsData
 
     // VIDEO DATA
     public Vector2Int VideoResolution;
+    public int ResolutionScale;
     public bool Vsync;
     public int FPSLock;
 
@@ -17,6 +18,8 @@ public class SettingsData
     public bool VertexWobble;
     public bool TextureWarping;
     public bool FilmGrain;
+    public float DitherStrength;
+    public int ColorRange;
 
     // CONTROL DATA
     public bool AutoLock;
@@ -29,6 +32,7 @@ public class SettingsData
         this.SfxVolume = 1.0f;
         
         this.VideoResolution = new Vector2Int(1920, 1080);
+        this.ResolutionScale = 2;
         this.Vsync = true;
         this.FPSLock = 60;
 
@@ -36,6 +40,8 @@ public class SettingsData
         this.VertexWobble = true;
         this.TextureWarping = true;
         this.FilmGrain = true;
+        this.DitherStrength = 0.05f;
+        this.ColorRange = 12;
         
         this.AutoLock = true;
     }

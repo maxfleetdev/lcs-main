@@ -11,10 +11,11 @@ namespace LCS
         public class GUIManager : MonoBehaviour
         {
             [SerializeField] private GameObject mainGUI;
-            [Header("GUI Elements")]
+            [Header("In-Game GUI")]
             [SerializeField] private GameObject saveScreenGUI;
             [SerializeField] private GameObject debugGUI;
             [SerializeField] private GameObject pickupGUI;
+            [SerializeField] private GameObject settingsGUI;
 
             private GameObject enabledGUI = null;
 
@@ -49,12 +50,13 @@ namespace LCS
                         break;
                     case GUIType.GUI_DEBUG:
                         EnableGUIElement(debugGUI);
-
                         break;
                     case GUIType.GUI_PICKUP:
                         EnableGUIElement(pickupGUI);
                         break;
-
+                    case GUIType.GUI_SETTINGS:
+                        EnableGUIElement(settingsGUI);
+                        break;
                     default:
                         return;
                 }
@@ -86,12 +88,6 @@ namespace LCS
             }
 
             #endregion
-        }
-
-        public interface IGUIObject
-        {
-            public void GUIEnable();
-            public void GUIDisable();
         }
     }
 }

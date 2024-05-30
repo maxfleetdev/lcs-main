@@ -80,6 +80,10 @@ public static class Command
                 SettingsDataHandler.LoadSettings();
                 break;
 
+            case "settings":
+                if (value[0] > 0) GUIHandler.ShowGUI(GUIType.GUI_SETTINGS);
+                break;
+
             default:
                 Debugger.LogConsole($"Unknown Command: {command.Name.ToLower()}", 0);
                 break;

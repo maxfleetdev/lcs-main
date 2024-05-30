@@ -28,7 +28,7 @@ namespace LCS
                 GenerateResolutions();
 
                 // vSync
-
+                vsyncToggle.isOn = settings.Vsync;
                 // FPS Lock
             }
 
@@ -40,7 +40,7 @@ namespace LCS
                 settings.VideoResolution = currentResolution;
 
                 // vSync
-                //settings.Vsync = vsyncToggle.isOn;
+                settings.Vsync = vsyncToggle.isOn;
 
                 // FPS Lock
             }
@@ -84,6 +84,7 @@ namespace LCS
             {
                 Resolution resolution = filteredResolutions[index];
                 Screen.SetResolution(resolution.width, resolution.height, true);
+                currentResolutionIndex = index;
             }
 
             #endregion

@@ -31,12 +31,13 @@ public class ItemEvent : MonoBehaviour, IDataPersistence
 
     public void SaveData(GameData data)
     {
+        if (data.ObjectsRemoved.Contains(objectID))
+        {
+            data.ObjectsRemoved.Remove(objectID);
+        }
+
         if (pickedUp)
         {
-            if (data.ObjectsRemoved.Contains(objectID))
-            {
-                data.ObjectsRemoved.Remove(objectID);
-            }
             data.ObjectsRemoved.Add(objectID);
         }
     }

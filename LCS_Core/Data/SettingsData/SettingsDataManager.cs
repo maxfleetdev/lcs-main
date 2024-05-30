@@ -33,6 +33,7 @@ namespace LCS
                 SettingsDataFinder writer = new SettingsDataFinder();
                 SettingsData data = SaveSettings();
                 writer.SaveSettings(data);
+                SettingsDataHandler.SettingsSaved();
             }
 
             private void LoadSettingsFromDisk()
@@ -53,6 +54,7 @@ namespace LCS
                     OfType<ISettingsObject>();
                 foreach (ISettingsObject mono in persistence_objects)
                 {
+                    print(persistence_objects.Count());
                     settingObjects.Add(mono);
                 }
             }

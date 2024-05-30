@@ -1,44 +1,33 @@
-using LCS.Data;
 using UnityEngine;
 
 namespace LCS
 {
     namespace GUI
     {
-        public class SettingsGUI : MonoBehaviour
+        public class SettingsGUI : MonoBehaviour, IGUIObject
         {
-            [SerializeField] private EmulatorSettingsGUI emulatorGUI;
+            [SerializeField] private GameObject guiElement;
 
-            private SettingsData currentSettings;
-            private SettingsDataFinder settingsFinder;
-
-            #region Setup
-
-            private void OnEnable()
+            public void EnableGUI()
             {
-                settingsFinder = new SettingsDataFinder();
-                currentSettings = settingsFinder.LoadSettings();
+                guiElement.SetActive(true);
 
-                // EMULATOR
-                emulatorGUI.gameObject.SetActive(true);
-                emulatorGUI.Construct(currentSettings);
-
-                // VIDEO
-
-                // AUDIO
-            }
-
-            private void OnDisable()
-            {
-                // needs to be additive rather than individual
-                currentSettings = emulatorGUI.FinishEdit();
-
-                // Save & Load Changes
-                settingsFinder.SaveSettings(currentSettings);
                 SettingsDataHandler.LoadSettings();
             }
 
-            #endregion
+            public void DisableGUI()
+            {
+                // Waits for settings to save before disabling GUI
+                SettingsDataHandler.OnSettingsSaveComplete += SettingsSaved;
+                SettingsDataHandler.SaveSettings();
+                SettingsDataHandler.LoadSettings();
+            }
+
+            private void SettingsSaved()
+            {
+                SettingsDataHandler.OnSettingsSaveComplete -= SettingsSaved;
+                guiElement.SetActive(false);
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ namespace LCS
 {
     namespace GUI
     {
-        public class EmulatorSettingsGUI : MonoBehaviour
+        public class EmulatorSettingsGUI : MonoBehaviour, ISettingsObject
         {
             [Header("Toggles")]
             [SerializeField] private Toggle crtToggle;
@@ -18,40 +18,36 @@ namespace LCS
             [SerializeField] private Slider colorSlider;
             [SerializeField] private Slider resolutionSlider;
 
-            private SettingsData settingsData = null;
-
-            // Loads all the values from SettingsData to GUI elements
-            public void Construct(SettingsData data)
+            public void LoadSetting(SettingsData settings)
             {
-                settingsData = data;
-
                 // toggles
-                crtToggle.isOn                  = settingsData.CRTEffect;
-                vertexToggle.isOn               = settingsData.VertexWobble;
-                warpingToggle.isOn              = settingsData.TextureWarping;
-                filmToggle.isOn                 = settingsData.FilmGrain;
-
+                this.crtToggle.isOn      = settings.CRTEffect;
+                this.vertexToggle.isOn   = settings.VertexWobble;
+                this.warpingToggle.isOn  = settings.TextureWarping;
+                this.filmToggle.isOn     = settings.FilmGrain;
+                
                 // sliders
-                ditherSlider.value              = settingsData.DitherStrength * 100;
-                colorSlider.value               = settingsData.ColorRange;
-                resolutionSlider.value          = settingsData.ResolutionScale;
+                this.ditherSlider.value      = settings.DitherStrength * 100;
+                this.colorSlider.value       = settings.ColorRange;
+                this.resolutionSlider.value  = settings.ResolutionScale;
+
+                Debugger.LogConsole("Loading EmulatorSettings", 0);
             }
 
-            // Called when the saved data is required to be applied
-            public SettingsData FinishEdit()
+            public void SaveSetting(SettingsData settings)
             {
                 // booleans
-                settingsData.CRTEffect          = crtToggle.isOn;
-                settingsData.VertexWobble       = vertexToggle.isOn;
-                settingsData.TextureWarping     = warpingToggle.isOn;
-                settingsData.FilmGrain          = filmToggle.isOn;
+                settings.CRTEffect      = crtToggle.isOn;
+                settings.VertexWobble   = vertexToggle.isOn;
+                settings.TextureWarping = warpingToggle.isOn;
+                settings.FilmGrain      = filmToggle.isOn;
 
                 // floats
-                settingsData.DitherStrength     = ditherSlider.value / 100;
-                settingsData.ColorRange         = (int)colorSlider.value;
-                settingsData.ResolutionScale    = (int)resolutionSlider.value;
+                settings.DitherStrength     = ditherSlider.value / 100;
+                settings.ColorRange         = (int)colorSlider.value;
+                settings.ResolutionScale    = (int)resolutionSlider.value;
 
-                return settingsData;
+                Debugger.LogConsole("Saving EmulatorSettings", 0);
             }
         }
     }

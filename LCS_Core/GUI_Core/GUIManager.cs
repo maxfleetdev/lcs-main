@@ -25,7 +25,6 @@ namespace LCS
             {
                 GUIHandler.OnGUIToggle += ShowGUI;
                 GUIHandler.OnGUIHide += HideGUI;
-                mainGUI.SetActive(false);
             }
 
             private void OnDestroy()
@@ -41,7 +40,7 @@ namespace LCS
             private void ShowGUI(GUIType type)
             {
                 // Start Core_GUI
-                mainGUI.SetActive(true);
+                //mainGUI.SetActive(true);
 
                 switch (type)
                 {
@@ -67,24 +66,17 @@ namespace LCS
                 if (gui == null)
                     return;
 
-                // Disable Current GUI
-                if (enabledGUI != null)
-                    enabledGUI.SetActive(false);
-
                 // Enable GUI
+                if (enabledGUI != null)
+                    enabledGUI.GetComponent<IGUIObject>().DisableGUI();
                 enabledGUI = gui;
-                enabledGUI.SetActive(true);
+                enabledGUI.GetComponent<IGUIObject>().EnableGUI();
             }
 
             private void HideGUI()
             {
-                if (enabledGUI == null)
-                    return;
-
                 // Reset GUI
-                enabledGUI.SetActive(false);
-                enabledGUI = null;
-                mainGUI.SetActive(false);
+                enabledGUI.GetComponent<IGUIObject>().DisableGUI();
             }
 
             #endregion

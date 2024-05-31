@@ -4,7 +4,7 @@ using UnityEngine.Rendering.PostProcessing;
 [RequireComponent(typeof(Camera))]
 public class EmulatorVisualManager : MonoBehaviour, ISettingsObject
 {
-    [SerializeField] private PSFXCamera PSX;
+    [SerializeField] private PSFXCameraLCS PSX;
     [SerializeField] private PostProcessVolume postProcessor;
 
     // Settings Data

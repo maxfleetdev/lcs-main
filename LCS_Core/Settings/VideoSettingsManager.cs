@@ -34,8 +34,6 @@ public class VideoSettingsManager : MonoBehaviour, ISettingsObject
 
     private void ApplySettings()
     {
-        Debugger.LogConsole("Applying Video Settings", 0);
-
         // SCREEN RESOLUTION & WINDOW MODE
         Screen.SetResolution(gameSettings.VideoResolution.x, gameSettings.VideoResolution.y, true);
         // VSYNC & FPS LOCK

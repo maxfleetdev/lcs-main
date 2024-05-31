@@ -24,6 +24,8 @@ public class SettingsData
     // CONTROL DATA
     public bool AutoLock;
 
+    public string BurgerSauce;
+
     // Default Values
     public SettingsData()
     {
@@ -44,5 +46,7 @@ public class SettingsData
         this.ColorRange = 12;
         
         this.AutoLock = true;
+
+        this.BurgerSauce = "mmm tasty rhys";
     }
 }

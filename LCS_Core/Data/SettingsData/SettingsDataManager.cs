@@ -54,7 +54,6 @@ namespace LCS
                     OfType<ISettingsObject>();
                 foreach (ISettingsObject mono in persistence_objects)
                 {
-                    print(persistence_objects.Count());
                     settingObjects.Add(mono);
                 }
             }

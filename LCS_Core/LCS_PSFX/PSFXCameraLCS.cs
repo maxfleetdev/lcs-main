@@ -25,95 +25,180 @@ public class PSFXCameraLCS : MonoBehaviour
     [SerializeField] Color letterboxColor = Color.black;
     [SerializeField] Vector2 xyAspectRatio = Vector2.one;
 
-    private Material blitMaterial;
-    private Vector3 previousPosition;
-    private List<Material> psfxMaterials = new List<Material>();
-
-    #region Exposed Variables
+    #region Variables
 
     public int Resolution
     {
-        get => resolutionScale;
-        set => resolutionScale = Mathf.Clamp(value, 1, int.MaxValue);
+        get
+        {
+            return resolutionScale;
+        }
+        set
+        {
+            resolutionScale = Mathf.Clamp(value, 1, int.MaxValue);
+        }
     }
 
     public bool EnableColorDepth
     {
-        get => enableColorDepth;
-        set => enableColorDepth = value;
+        get
+        {
+            return enableColorDepth;
+        }
+        set
+        {
+            enableColorDepth = value;
+        }
     }
 
     public int ColorDepth
     {
-        get => colorDepth;
-        set => colorDepth = Mathf.Clamp(value, 1, 32);
+        get
+        {
+            return colorDepth;
+        }
+        set
+        {
+            colorDepth = Mathf.Clamp(value, 1, 32);
+        }
     }
 
     public int VertexPrecision
     {
-        get => vertexPrecision;
-        set => vertexPrecision = Mathf.Clamp(value, 1, int.MaxValue);
+        get
+        {
+            return vertexPrecision;
+        }
+        set
+        {
+            vertexPrecision = Mathf.Clamp(value, 1, int.MaxValue);
+        }
     }
 
     public int CameraPositionPrecision
     {
-        get => cameraPositionPrecision;
-        set => cameraPositionPrecision = Mathf.Clamp(value, 1, int.MaxValue);
+        get
+        {
+            return cameraPositionPrecision;
+        }
+        set
+        {
+            cameraPositionPrecision = Mathf.Clamp(value, 1, int.MaxValue);
+        }
     }
 
     public float TriangleCullDistance
     {
-        get => triangleCullDistance;
-        set => triangleCullDistance = Mathf.Clamp(value, 0, int.MaxValue);
+        get
+        {
+            return triangleCullDistance;
+        }
+        set
+        {
+            triangleCullDistance = Mathf.Clamp(value, 0, int.MaxValue);
+        }
     }
 
     public bool TriangleNearClipping
     {
-        get => triangleNearClipping;
-        set => triangleNearClipping = value;
+        get
+        {
+            return triangleNearClipping;
+        }
+        set
+        {
+            triangleNearClipping = value;
+        }
     }
 
     public float Fade
     {
-        get => fadeOut;
-        set => fadeOut = Mathf.Clamp01(value);
+        get
+        {
+            return fadeOut;
+        }
+        set
+        {
+            fadeOut = Mathf.Clamp01(value);
+        }
     }
 
     public PSFXFadeMethod FadeMethod
     {
-        get => fadeMethod;
-        set => fadeMethod = value;
+        get
+        {
+            return fadeMethod;
+        }
+        set
+        {
+            fadeMethod = value;
+        }
     }
 
     public float DitheringStrength
     {
-        get => ditheringStrength;
-        set => ditheringStrength = Mathf.Clamp01(value);
+        get
+        {
+            return ditheringStrength;
+        }
+        set
+        {
+            ditheringStrength = Mathf.Clamp01(value);
+        }
     }
 
     public float AffineStrength
     {
-        get => affineDistortion;
-        set => affineDistortion = Mathf.Clamp01(value);
+        get
+        {
+            return affineDistortion;
+        }
+        set
+        {
+            affineDistortion = Mathf.Clamp01(value);
+        }
     }
 
     public bool EnableLetterboxing
     {
-        get => enableLetterboxing;
-        set => enableLetterboxing = value;
+        get
+        {
+            return enableLetterboxing;
+        }
+        set
+        {
+            enableLetterboxing = value;
+        }
     }
 
     public Vector2 LetterboxAspectRatio
     {
-        get => xyAspectRatio;
-        set => xyAspectRatio = new Vector2(Mathf.Max(1, value.x), Mathf.Max(1, value.y));
+        get
+        {
+            return xyAspectRatio;
+        }
+        set
+        {
+            float x = Mathf.Max(1, value.x);
+            float y = Mathf.Max(1, value.y);
+
+            xyAspectRatio = new Vector2(x, y);
+        }
     }
 
     public Color BorderColor
     {
-        get => letterboxColor;
-        set => letterboxColor = value;
+        get
+        {
+            return letterboxColor;
+        }
+        set
+        {
+            letterboxColor = value;
+        }
     }
+
+    Material blitMaterial;
 
     private void Awake()
     {
@@ -128,6 +213,11 @@ public class PSFXCameraLCS : MonoBehaviour
 
     #endregion
 
+    #region Cache
+
+    private Vector3 previousPosition;
+    private List<Material> psfxMaterials = new List<Material>();
+
     private void CachePSFXMaterials()
     {
         psfxMaterials.Clear();
@@ -139,6 +229,10 @@ public class PSFXCameraLCS : MonoBehaviour
             }
         }
     }
+
+    #endregion
+
+    #region Runtime
 
     private void OnPreRender()
     {
@@ -191,4 +285,6 @@ public class PSFXCameraLCS : MonoBehaviour
     {
         transform.position = previousPosition;
     }
+
+    #endregion
 }

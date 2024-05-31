@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class GameData
 {
     // GAME DATA
-    public string SaveLocation;             // Used by SavePoints to save the location name (eg. House, Hospital etc)
-    public string SaveTime;                 // The time and date it was last saved
-    public int DataIndex;                   // Used for the amount of saves, first save is 1, second is 2 etc
+    public string SaveLocation;
+    public string SaveTime;
+    public int DataIndex;
     public int SaveAmount;
     public DifficultyType GameDifficulty;
 
@@ -22,10 +23,9 @@ public class GameData
     public float TotalDistance;
     public int GameScore;
 
-    // OBJECT DATA
-    public List<string> ObjectsRemoved;
-    public List<string> PuzzlesCompleted;
-    public List<string> EnemiesKilled;
+    // SCENE DATA
+    public int SceneIndex;
+    public SerializableDictionary<int, SceneData> SceneData;
 
     public GameData()
     {
@@ -45,8 +45,7 @@ public class GameData
         this.TotalDistance = 0f;
         this.GameScore = 0;
 
-        this.ObjectsRemoved = new List<string>();
-        this.PuzzlesCompleted = new List<string>();
-        this.EnemiesKilled = new List<string>();
+        this.SceneIndex = 0;
+        this.SceneData = new SerializableDictionary<int, SceneData>();
     }
 }

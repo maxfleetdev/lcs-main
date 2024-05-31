@@ -10,6 +10,7 @@ namespace LCS
         {
             private List<IDataPersistence> dataObjects = new List<IDataPersistence>();
             private GameDataFinder gameDataWriter = null;
+            private GameData currentLoadData = null;
 
             #region Start/Stop
 
@@ -63,6 +64,9 @@ namespace LCS
                 data.SaveTime = System.DateTime.Now.ToString();
                 data.SaveAmount++;
 
+                // Load current SceneData for overwriting
+                data = SaveSceneData(data);
+
                 // Find all scene objects
                 CacheObjects();
                 foreach (IDataPersistence objs in dataObjects)
@@ -83,21 +87,53 @@ namespace LCS
 
             private void LoadScene(int index)
             {
+                // Get Data
                 CacheObjects();
                 GameDataFinder gameDataWriter = new GameDataFinder(index);
                 GameData data = gameDataWriter.LoadData();
                 if (data == null)
                     return;
+
+                // Get SceneData Index
+                data = LoadSceneData(data);
+
+                // Load Data to objects
                 foreach (IDataPersistence objs in dataObjects)
                 {
                     objs.LoadData(data);
                 }
+                currentLoadData = data;
+                Debugger.LogConsole($"Current Load {currentLoadData.DataIndex}", 0);
             }
 
             private void DeleteData(int index)
             {
                 gameDataWriter = new GameDataFinder(index);
                 gameDataWriter.DeleteData();
+            }
+
+            #endregion
+
+            #region Scene Logic
+
+            private GameData SaveSceneData(GameData data)
+            {
+                int current_scene = SceneHandler.GetCurrentScene();
+                if (!data.SceneData.ContainsKey(current_scene))
+                {
+                    SceneData scene_data = new SceneData();
+                    data.SceneData.Add(current_scene, scene_data);
+                }
+                data.SceneIndex = current_scene;
+                print(current_scene);
+                return data;
+            }
+
+            private GameData LoadSceneData(GameData data)
+            {
+                int current_scene = SceneHandler.GetCurrentScene();
+                data.SceneIndex = current_scene;
+                return data;
             }
 
             #endregion

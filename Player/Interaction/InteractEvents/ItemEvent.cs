@@ -31,20 +31,24 @@ public class ItemEvent : MonoBehaviour, IDataPersistence
 
     public void SaveData(GameData data)
     {
-        if (data.ObjectsRemoved.Contains(objectID))
-        {
-            data.ObjectsRemoved.Remove(objectID);
-        }
+        // Load Current SceneData
+        SceneData scene = data.SceneData[data.SceneIndex];
 
+        // Save Data
+        if (scene.ObjectsRemoved.Contains(objectID))
+        {
+            scene.ObjectsRemoved.Remove(objectID);
+        }
         if (pickedUp)
         {
-            data.ObjectsRemoved.Add(objectID);
+            scene.ObjectsRemoved.Add(objectID);
         }
     }
 
     public void LoadData(GameData data)
     {
-        pickedUp = data.ObjectsRemoved.Contains(objectID) ? true : false;
+        SceneData scene = data.SceneData[data.SceneIndex];
+        pickedUp = scene.ObjectsRemoved.Contains(objectID) ? true : false;
         ToggleObject();
     }
 

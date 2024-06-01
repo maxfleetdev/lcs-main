@@ -48,7 +48,8 @@ public class ItemEvent : MonoBehaviour, IDataPersistence
     public void LoadData(GameData data)
     {
         SceneData scene = data.SceneData[SceneHandler.CurrentSceneName()];
-        pickedUp = scene.ObjectsRemoved.Contains(objectID) ? true : false;
+        bool contains = scene.ObjectsRemoved.Contains(objectID);
+        pickedUp = contains;
         ToggleObject();
     }
 
@@ -80,17 +81,14 @@ public class ItemEvent : MonoBehaviour, IDataPersistence
         }
     }
 
+    // Sends Event to ItemData & wait for GUI Response
     private void PickupItem()
     {
         InventoryHandler.OnPickupChoice += PickupChoice;
         item.Pickup(amount);
     }
 
-    private void RemoveItem()
-    {
-        item.Remove(amount);
-    }
-
+    // GUI's response
     private void PickupChoice(bool choice)
     {
         InventoryHandler.OnPickupChoice -= PickupChoice;
@@ -99,6 +97,11 @@ public class ItemEvent : MonoBehaviour, IDataPersistence
             pickedUp = true;
             ToggleObject();
         }
+    }
+
+    private void RemoveItem()
+    {
+        item.Remove(amount);
     }
 
     private void ToggleObject()

@@ -31,6 +31,15 @@ public class SceneSystem : MonoBehaviour
     {
         // Load Requested Scene
         AsyncOperation scene_to_load = SceneManager.LoadSceneAsync(to_load, LoadSceneMode.Additive);
+        
+        // Check Scene Validity
+        if (scene_to_load == null)
+        {
+            SceneHandler.SceneChanged(false);
+            yield break;
+        }
+
+        // Load Requested Scene
         scene_to_load.allowSceneActivation = false;
         while (!scene_to_load.isDone)
         {
@@ -57,6 +66,6 @@ public class SceneSystem : MonoBehaviour
         }
 
         // Call to listeners
-        SceneHandler.SceneChanged();
+        SceneHandler.SceneChanged(true);
     }
 }

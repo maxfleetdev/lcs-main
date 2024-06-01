@@ -123,17 +123,23 @@ namespace LCS
             private void LoadSceneData(GameData data)
             {
                 string scene_name = data.CurrentScene;
-                SceneHandler.ChangeScene(scene_name);
                 SceneHandler.OnSceneChanged += SceneDataLoaded;
+                SceneHandler.ChangeScene(scene_name);
             }
 
-            private void SceneDataLoaded()
+            private void SceneDataLoaded(bool result)
             {
-                // Load Data to objects
-                CacheObjects();
-                foreach (IDataPersistence objs in dataObjects)
+                if (result)
                 {
-                    objs.LoadData(currentLoadData);
+                    CacheObjects();
+                    foreach (IDataPersistence objs in dataObjects)
+                    {
+                        objs.LoadData(currentLoadData);
+                    }
+                }
+                else
+                {
+                    Debugger.LogConsole($"ERROR: No Scene Exists ({currentLoadData.CurrentScene})", 2);
                 }
                 SceneHandler.OnSceneChanged -= SceneDataLoaded;
             }

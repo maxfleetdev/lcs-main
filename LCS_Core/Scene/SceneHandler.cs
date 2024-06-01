@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 public static class SceneHandler
 {
     public static event Action<string> OnChangeScene;
-    public static event Action OnSceneChanged;
+    public static event Action<bool> OnSceneChanged;
 
     /// <summary>
     /// Changes scene from within the build using an int
@@ -18,9 +18,9 @@ public static class SceneHandler
     /// <summary>
     /// Called once the SceneSystem has loaded and activated the newest scene
     /// </summary>
-    public static void SceneChanged()
+    public static void SceneChanged(bool result)
     {
-        OnSceneChanged?.Invoke();
+        OnSceneChanged?.Invoke(result);
     }
 
     /// <summary>

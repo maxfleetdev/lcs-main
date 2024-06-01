@@ -25,7 +25,7 @@ public class EmulatorVisualManager : MonoBehaviour, ISettingsObject
 
     #region Startup
 
-    private void Start()
+    private void OnEnable()
     {
         // PSX SETUP //
         if (PSX == null)
@@ -51,7 +51,7 @@ public class EmulatorVisualManager : MonoBehaviour, ISettingsObject
 
     #region Save/Load Settings
 
-    public void SaveSetting(SettingsData settings) { }      // does nothing atm
+    public void SaveSetting(SettingsData settings) { }
 
     public void LoadSetting(SettingsData settings)
     {

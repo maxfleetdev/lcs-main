@@ -16,17 +16,28 @@ namespace LCS
             {
                 SettingsDataHandler.OnSettingsSave += SaveSettingsToDisk;
                 SettingsDataHandler.OnSettingsLoad += LoadSettingsFromDisk;
+                SceneHandler.OnSceneChanged += NewSceneLoaded;
             }
 
-            private void OnDisable()
+            private void OnDestroy()
             {
                 SettingsDataHandler.OnSettingsSave -= SaveSettingsToDisk;
                 SettingsDataHandler.OnSettingsLoad -= LoadSettingsFromDisk;
+                SceneHandler.OnSceneChanged -= NewSceneLoaded;
             }
 
             #endregion
 
             #region Save/Load Events
+
+            // Called whenever a scene is loaded/replaced
+            private void NewSceneLoaded(bool result)
+            {
+                if (result)
+                {
+                    LoadSettingsFromDisk();
+                }
+            }
 
             private void SaveSettingsToDisk()
             {

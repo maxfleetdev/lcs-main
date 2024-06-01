@@ -24,8 +24,8 @@ public class GameData
     public int GameScore;
 
     // SCENE DATA
-    public int SceneIndex;
-    public SerializableDictionary<int, SceneData> SceneData;
+    public string CurrentScene;
+    public SerializableDictionary<string, SceneData> SceneData;
 
     public GameData()
     {
@@ -45,7 +45,7 @@ public class GameData
         this.TotalDistance = 0f;
         this.GameScore = 0;
 
-        this.SceneIndex = 0;
-        this.SceneData = new SerializableDictionary<int, SceneData>();
+        this.CurrentScene = string.Empty;
+        this.SceneData = new SerializableDictionary<string, SceneData>();
     }
 }

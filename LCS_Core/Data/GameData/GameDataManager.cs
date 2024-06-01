@@ -88,22 +88,14 @@ namespace LCS
             private void LoadScene(int index)
             {
                 // Get Data
-                CacheObjects();
                 GameDataFinder gameDataWriter = new GameDataFinder(index);
                 GameData data = gameDataWriter.LoadData();
                 if (data == null)
                     return;
+                currentLoadData = data;
 
                 // Get SceneData Index
-                data = LoadSceneData(data);
-
-                // Load Data to objects
-                foreach (IDataPersistence objs in dataObjects)
-                {
-                    objs.LoadData(data);
-                }
-                currentLoadData = data;
-                Debugger.LogConsole($"Current Load {currentLoadData.DataIndex}", 0);
+                LoadSceneData(data);
             }
 
             private void DeleteData(int index)
@@ -118,22 +110,32 @@ namespace LCS
 
             private GameData SaveSceneData(GameData data)
             {
-                int current_scene = SceneHandler.GetCurrentScene();
+                string current_scene = SceneHandler.CurrentSceneName();
                 if (!data.SceneData.ContainsKey(current_scene))
                 {
                     SceneData scene_data = new SceneData();
                     data.SceneData.Add(current_scene, scene_data);
                 }
-                data.SceneIndex = current_scene;
-                print(current_scene);
+                data.CurrentScene = current_scene;
                 return data;
             }
 
-            private GameData LoadSceneData(GameData data)
+            private void LoadSceneData(GameData data)
             {
-                int current_scene = SceneHandler.GetCurrentScene();
-                data.SceneIndex = current_scene;
-                return data;
+                string scene_name = data.CurrentScene;
+                SceneHandler.ChangeScene(scene_name);
+                SceneHandler.OnSceneChanged += SceneDataLoaded;
+            }
+
+            private void SceneDataLoaded()
+            {
+                // Load Data to objects
+                CacheObjects();
+                foreach (IDataPersistence objs in dataObjects)
+                {
+                    objs.LoadData(currentLoadData);
+                }
+                SceneHandler.OnSceneChanged -= SceneDataLoaded;
             }
 
             #endregion

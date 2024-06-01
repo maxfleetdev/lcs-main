@@ -32,7 +32,7 @@ public class ItemEvent : MonoBehaviour, IDataPersistence
     public void SaveData(GameData data)
     {
         // Load Current SceneData
-        SceneData scene = data.SceneData[data.SceneIndex];
+        SceneData scene = data.SceneData[SceneHandler.CurrentSceneName()];
 
         // Save Data
         if (scene.ObjectsRemoved.Contains(objectID))
@@ -47,7 +47,7 @@ public class ItemEvent : MonoBehaviour, IDataPersistence
 
     public void LoadData(GameData data)
     {
-        SceneData scene = data.SceneData[data.SceneIndex];
+        SceneData scene = data.SceneData[SceneHandler.CurrentSceneName()];
         pickedUp = scene.ObjectsRemoved.Contains(objectID) ? true : false;
         ToggleObject();
     }

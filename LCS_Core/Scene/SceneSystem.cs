@@ -20,6 +20,8 @@ public class SceneSystem : MonoBehaviour
 
     #endregion
 
+    #region Changing Scene
+
     private void ChangeScene(string scene)
     {
         activeScene = SceneManager.GetActiveScene().name;
@@ -68,4 +70,6 @@ public class SceneSystem : MonoBehaviour
         // Call to listeners
         SceneHandler.SceneChanged(true);
     }
+
+    #endregion
 }

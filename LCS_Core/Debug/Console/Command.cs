@@ -1,71 +1,90 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public static class Command
 {
-    public struct CommandData
+    public class CommandData
     {
         public string Name { get; set; }
-        public int[] Values { get; set; }
+        public List<object> Values { get; set; }
     }
 
     private static CommandData ParseCommand(string input)
     {
         string[] parts = input.Split(' ');
         string commandName = parts[0];
-        int[] values = new int[parts.Length - 1];
+        List<object> values = new List<object>();
+
         for (int i = 1; i < parts.Length; i++)
         {
             if (int.TryParse(parts[i], out int value))
             {
-                values[i - 1] = value;
+                values.Add(value);
             }
             else
             {
-                Debugger.LogConsole($"Invalid value: {parts[i]}", 0);
+                values.Add(parts[i]);
             }
         }
 
         return new CommandData { Name = commandName, Values = values };
     }
 
+
     public static void ExecuteCommand(string input)
     {
         CommandData command = ParseCommand(input);
-        int[] value = command.Values;
-        Debugger.LogConsole($">{input}", 0);
+        List<object> values = command.Values;
+        Debug.Log($">{input}");
+
         switch (command.Name.ToLower())
         {
             case "give":
-                int id = value[0];               // Item ID
-                int q = value[1];                // Quantity
-                ItemData data = ItemCache.RetrieveItem(id);
-                if (data != null)
-                    data.Pickup(q);
+                if (values.Count >= 2 && values[0] is int id && values[1] is int q)
+                {
+                    ItemData data = ItemCache.RetrieveItem(id);
+                    if (data != null)
+                        data.Pickup(q);
+                }
                 break;
 
             case "exit":
-                if (value[0] == 1)
+                if (values.Count >= 1 && values[0] is int exitCode && exitCode == 1)
+                {
                     Application.Quit();
-                Debugger.LogConsole($"Closing Application...", 0);
+                    Debug.Log("Closing Application...");
+                }
                 break;
 
             case "save":
-                GameDataHandler.SaveData(value[0]);
+                if (values.Count >= 1 && values[0] is int saveSlot)
+                {
+                    GameDataHandler.SaveData(saveSlot);
+                }
                 break;
 
             case "load":
-                GameDataHandler.LoadData(value[0]);
+                if (values.Count >= 1 && values[0] is int loadSlot)
+                {
+                    GameDataHandler.LoadData(loadSlot);
+                }
                 break;
 
             case "delete":
-                GameDataHandler.DeleteData(value[0]);
+                if (values.Count >= 1 && values[0] is int deleteSlot)
+                {
+                    GameDataHandler.DeleteData(deleteSlot);
+                }
                 break;
 
             case "gui":
-                bool toggle = value[0] > 0 ? true : false;
-                if (toggle) GUIHandler.ShowGUI(GUIType.GUI_SAVE_GAME);
-                else GUIHandler.HideGUI();
+                if (values.Count >= 1 && values[0] is int toggleValue)
+                {
+                    bool toggle = toggleValue > 0;
+                    if (toggle) GUIHandler.ShowGUI(GUIType.GUI_SAVE_GAME);
+                    else GUIHandler.HideGUI();
+                }
                 break;
 
             case "bootstrap":
@@ -81,11 +100,21 @@ public static class Command
                 break;
 
             case "settings":
-                if (value[0] > 0) GUIHandler.ShowGUI(GUIType.GUI_SETTINGS);
+                if (values.Count >= 1 && values[0] is int settingsToggleValue && settingsToggleValue > 0)
+                {
+                    GUIHandler.ShowGUI(GUIType.GUI_SETTINGS);
+                }
+                break;
+
+            case "scene":
+                if (values.Count >= 1 && values[0] is string sceneName)
+                {
+                    SceneHandler.ChangeScene(sceneName);
+                }
                 break;
 
             default:
-                Debugger.LogConsole($"Unknown Command: {command.Name.ToLower()}", 0);
+                Debug.Log($"Unknown Command: {command.Name.ToLower()}");
                 break;
         }
     }

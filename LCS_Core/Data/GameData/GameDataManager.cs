@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -16,19 +17,25 @@ namespace LCS
 
             private void Awake()
             {
+                // Save Events
                 GameDataHandler.SaveScene += SaveScene;
                 GameDataHandler.SaveNewScene += NewSaveScene;
                 GameDataHandler.LoadScene += LoadScene;
                 GameDataHandler.DeleteSave += DeleteData;
+
+                // Scene Events
+                SceneHandler.OnSceneChanged += SceneDataLoaded;
             }
 
             private void OnDisable()
             {
+                // Flush Events
                 dataObjects.Clear();
                 GameDataHandler.SaveScene -= SaveScene;
                 GameDataHandler.SaveNewScene -= NewSaveScene;
                 GameDataHandler.LoadScene -= LoadScene;
                 GameDataHandler.DeleteSave -= DeleteData;
+                SceneHandler.OnSceneChanged -= SceneDataLoaded;
             }
 
             #endregion
@@ -61,7 +68,7 @@ namespace LCS
 
                 // Save Game Information
                 data.SaveLocation = SaveCache.GetSaveLocation();
-                data.SaveTime = System.DateTime.Now.ToString();
+                data.SaveTime = DateTime.Now.ToString();
                 data.SaveAmount++;
 
                 // Load current SceneData for overwriting
@@ -87,15 +94,18 @@ namespace LCS
 
             private void LoadScene(int index)
             {
-                // Get Data
+                // Get Data from Index
                 GameDataFinder gameDataWriter = new GameDataFinder(index);
                 GameData data = gameDataWriter.LoadData();
                 if (data == null)
                     return;
+
+                // Cache Current Save
                 currentLoadData = data;
 
-                // Get SceneData Index
-                LoadSceneData(data);
+                // Load Previous Scene
+                string scene_name = currentLoadData.CurrentScene;
+                SceneHandler.ChangeScene(scene_name);
             }
 
             private void DeleteData(int index)
@@ -111,6 +121,8 @@ namespace LCS
             private GameData SaveSceneData(GameData data)
             {
                 string current_scene = SceneHandler.CurrentSceneName();
+                
+                // Save Current Scene into SceneData
                 if (!data.SceneData.ContainsKey(current_scene))
                 {
                     SceneData scene_data = new SceneData();
@@ -118,13 +130,6 @@ namespace LCS
                 }
                 data.CurrentScene = current_scene;
                 return data;
-            }
-
-            private void LoadSceneData(GameData data)
-            {
-                string scene_name = data.CurrentScene;
-                SceneHandler.OnSceneChanged += SceneDataLoaded;
-                SceneHandler.ChangeScene(scene_name);
             }
 
             private void SceneDataLoaded(bool result)
@@ -141,7 +146,6 @@ namespace LCS
                 {
                     Debugger.LogConsole($"ERROR: No Scene Exists ({currentLoadData.CurrentScene})", 2);
                 }
-                SceneHandler.OnSceneChanged -= SceneDataLoaded;
             }
 
             #endregion

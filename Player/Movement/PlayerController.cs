@@ -71,6 +71,8 @@ public class PlayerController : MonoBehaviour, IDataPersistence
 
     public void LoadData(GameData data)
     {
+        if (data == null) return;
+
         Vector3 pos = data.PlayerPositon;
         float rot = data.PlayerRotation;
         LoadPosition(pos, rot);

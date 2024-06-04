@@ -13,6 +13,8 @@ public class InputData : ScriptableObject, MainControls.IGameplayActions, MainCo
     public event Action DebugEvent;
     public event Action SprintStartEvent;
     public event Action SprintEndEvent;
+    public event Action FaceDirectionStart;
+    public event Action FaceDirectionEnd;
 
     private MainControls mainControls;
 
@@ -98,6 +100,14 @@ public class InputData : ScriptableObject, MainControls.IGameplayActions, MainCo
 
         if (context.phase == InputActionPhase.Canceled)
             SprintEndEvent?.Invoke();
+    }
+
+    public void OnChangeView(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed)
+            FaceDirectionStart?.Invoke();
+        if (context.phase == InputActionPhase.Canceled)
+            FaceDirectionEnd?.Invoke();
     }
 
     #endregion

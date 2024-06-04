@@ -1,10 +1,15 @@
 using UnityEngine;
 
-public class CameraManager : MonoBehaviour
+/// <summary>
+/// Used as a manager for switching Cameras, does not actually control movement. Listens to CameraHandler.
+/// </summary>
+[RequireComponent(typeof(CameraController))]
+public class CameraSwitchManager : MonoBehaviour
 {
     // Camera Switching
     private SceneCamera activeCamera = null;
     private CameraData currentCameraData;
+    private CameraController controller = null;
     private ViewType currentViewType;
 
     #region Startup
@@ -13,12 +18,16 @@ public class CameraManager : MonoBehaviour
     {
         // Scene Cameras
         CacheAllCameras();
-        CameraHandler.OnActivateCamera += ActivateCamera;
+
+        // Camera Events
+        CameraSwitchHandler.OnActivateCamera += ActivateCamera;
+        CameraSwitchHandler.OnForceSwitch += RefreshNewView;
     }
 
     private void OnDisable()
     {
-        CameraHandler.OnActivateCamera -= ActivateCamera;
+        CameraSwitchHandler.OnActivateCamera -= ActivateCamera;
+        CameraSwitchHandler.OnForceSwitch -= RefreshNewView;
     }
 
     private void CacheAllCameras()
@@ -26,6 +35,10 @@ public class CameraManager : MonoBehaviour
         // Uses cache rather than this class
         SceneCamera[] cameras = FindObjectsByType<SceneCamera>(FindObjectsSortMode.None);
         CameraCache.CacheCameras(cameras);
+        
+        // Camera Controller
+        controller = GetComponent<CameraController>();
+        controller.SetupController(PlayerCache.PlayerTransform);
     }
 
     #endregion
@@ -59,29 +72,22 @@ public class CameraManager : MonoBehaviour
 
     #endregion
 
-    #region View Activation
+    #region View Change
 
     private void SwitchView()
     {
         if (activeCamera == null) return;
-        Debugger.LogConsole($"Switching to Camera Type {currentViewType}", 0);
+        controller.SwitchView(currentViewType, activeCamera.TargetTransform);
+    }
 
-        // camera view logic
-        // change transform
-        switch (currentViewType)
-        {
-            case ViewType.VIEW_FOLLOW:
-                break;
+    #endregion
 
-            case ViewType.VIEW_LOOKAT:
-                break;
+    #region Debugging
 
-            case ViewType.VIEW_STATIC: 
-                break;
-
-            case ViewType.VIEW_DOLLY: 
-                break;
-        }
+    private void RefreshNewView(ViewType viewType)
+    {
+        currentViewType = viewType;
+        SwitchView();
     }
 
     #endregion

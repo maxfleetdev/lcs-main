@@ -113,6 +113,13 @@ public static class Command
                 }
                 break;
 
+            case "view":
+                if (values.Count >= 1 && values[0] is int view_type)
+                {
+                    CameraSwitchHandler.ForceSwitchView((ViewType)view_type);
+                }
+                break;
+
             default:
                 Debug.Log($"Unknown Command: {command.Name.ToLower()}");
                 break;

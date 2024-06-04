@@ -29,6 +29,8 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
 
     public void LoadData(GameData data)
     {
+        if (data == null) return;
+
         inventorySlots.Clear();
         inventorySlots = data.Inventory;
     }

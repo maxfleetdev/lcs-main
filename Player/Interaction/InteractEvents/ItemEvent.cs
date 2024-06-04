@@ -46,6 +46,8 @@ public class ItemEvent : MonoBehaviour, IDataPersistence
 
     public void LoadData(GameData data)
     {
+        if (data == null) return;
+
         // Get current scene & check for GUID
         SceneData scene = data.SceneData[SceneHandler.CurrentSceneName()];
         pickedUp = scene.ObjectsRemoved.Contains(objectID);

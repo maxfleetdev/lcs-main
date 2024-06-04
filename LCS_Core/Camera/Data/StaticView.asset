@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 589ade7140d17cc4b88b342c2a84fd01, type: 3}
-  m_Name: Test Data
+  m_Name: StaticView
   m_EditorClassIdentifier: 
-  CameraViewType: 0
+  CameraViewType: 2

@@ -80,6 +80,15 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ChangeView"",
+                    ""type"": ""Button"",
+                    ""id"": ""02b1a67b-d8a6-4084-b539-195e58306c08"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -289,6 +298,28 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e6df366e-3b24-4e3d-9e0e-3daaf5294b42"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""ChangeView"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fc3110bc-f751-451e-8a56-e30af25a1740"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""ChangeView"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -842,6 +873,7 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
         m_Gameplay_Aim = m_Gameplay.FindAction("Aim", throwIfNotFound: true);
         m_Gameplay_Debug = m_Gameplay.FindAction("Debug", throwIfNotFound: true);
         m_Gameplay_Sprint = m_Gameplay.FindAction("Sprint", throwIfNotFound: true);
+        m_Gameplay_ChangeView = m_Gameplay.FindAction("ChangeView", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -919,6 +951,7 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Aim;
     private readonly InputAction m_Gameplay_Debug;
     private readonly InputAction m_Gameplay_Sprint;
+    private readonly InputAction m_Gameplay_ChangeView;
     public struct GameplayActions
     {
         private @MainControls m_Wrapper;
@@ -929,6 +962,7 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
         public InputAction @Aim => m_Wrapper.m_Gameplay_Aim;
         public InputAction @Debug => m_Wrapper.m_Gameplay_Debug;
         public InputAction @Sprint => m_Wrapper.m_Gameplay_Sprint;
+        public InputAction @ChangeView => m_Wrapper.m_Gameplay_ChangeView;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -956,6 +990,9 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
             @Sprint.started += instance.OnSprint;
             @Sprint.performed += instance.OnSprint;
             @Sprint.canceled += instance.OnSprint;
+            @ChangeView.started += instance.OnChangeView;
+            @ChangeView.performed += instance.OnChangeView;
+            @ChangeView.canceled += instance.OnChangeView;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -978,6 +1015,9 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
             @Sprint.started -= instance.OnSprint;
             @Sprint.performed -= instance.OnSprint;
             @Sprint.canceled -= instance.OnSprint;
+            @ChangeView.started -= instance.OnChangeView;
+            @ChangeView.performed -= instance.OnChangeView;
+            @ChangeView.canceled -= instance.OnChangeView;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -1150,6 +1190,7 @@ public partial class @MainControls: IInputActionCollection2, IDisposable
         void OnAim(InputAction.CallbackContext context);
         void OnDebug(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
+        void OnChangeView(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

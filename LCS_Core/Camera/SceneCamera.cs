@@ -1,6 +1,9 @@
 using NaughtyAttributes;
 using UnityEngine;
 
+/// <summary>
+/// Used as a container for holding data and transforms. Uses BoxTrigger to activate/deactivate this SceneCamera
+/// </summary>
 public class SceneCamera : MonoBehaviour, ISceneCamera
 {
     [SerializeField] private CameraData cameraData;
@@ -55,7 +58,7 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
     {
         if (!cameraActive)
         {
-            CameraHandler.ActivateCamera(cameraID);
+            CameraSwitchHandler.ActivateCamera(cameraID);
         }
     }
 

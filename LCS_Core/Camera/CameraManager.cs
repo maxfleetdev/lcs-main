@@ -1,18 +1,18 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    private Dictionary<int, SceneCamera> sceneCameras;
+    // Camera Switching
     private SceneCamera activeCamera = null;
+    private CameraData currentCameraData;
+    private ViewType currentViewType;
 
     #region Startup
 
     private void OnEnable()
     {
-        sceneCameras = new Dictionary<int, SceneCamera>();
-        CacheCameras();
-
+        // Scene Cameras
+        CacheAllCameras();
         CameraHandler.OnActivateCamera += ActivateCamera;
     }
 
@@ -21,41 +21,66 @@ public class CameraManager : MonoBehaviour
         CameraHandler.OnActivateCamera -= ActivateCamera;
     }
 
-    private void CacheCameras()
+    private void CacheAllCameras()
     {
+        // Uses cache rather than this class
         SceneCamera[] cameras = FindObjectsByType<SceneCamera>(FindObjectsSortMode.None);
-        if (cameras.Length == 0)
-        {
-            Debugger.LogConsole("No Virtual Cameras in scene!", 1);
-            return;
-        }
-        int index = 0;
-        foreach (var cam in cameras)
-        {
-            if (cam == null) continue;
-            cam.InitialiseCamera(index);
-            sceneCameras.Add(index, cam);
-            index++;
-        }
+        CameraCache.CacheCameras(cameras);
     }
 
     #endregion
 
-    #region Activation
+    #region Camera Activation
 
     private void ActivateCamera(int id)
     {
-        if (sceneCameras == null || sceneCameras.Count == 0)
-            return;
-
-        if (sceneCameras.ContainsKey(id))
+        SceneCamera camera = CameraCache.GetCamera(id);
+        if (camera == null)
         {
-            if (activeCamera != null)
-            {
-                activeCamera.DeactivateCamera();
-            }
-            activeCamera = sceneCameras[id];
-            activeCamera.ActivateCamera();
+            Debugger.LogConsole("No Camera from Cache", 1);
+            return;
+        }
+
+        // Switching/Activating Camera
+        if (activeCamera != null)
+        {
+            activeCamera.DeactivateCamera();
+        }
+        activeCamera = camera;
+        activeCamera.ActivateCamera();
+
+        // Gather Data from SceneView
+        currentCameraData = activeCamera.CameraData;
+        currentViewType = currentCameraData.CameraViewType;
+
+        // Switches the current camera view
+        SwitchView();
+    }
+
+    #endregion
+
+    #region View Activation
+
+    private void SwitchView()
+    {
+        if (activeCamera == null) return;
+        Debugger.LogConsole($"Switching to Camera Type {currentViewType}", 0);
+
+        // camera view logic
+        // change transform
+        switch (currentViewType)
+        {
+            case ViewType.VIEW_FOLLOW:
+                break;
+
+            case ViewType.VIEW_LOOKAT:
+                break;
+
+            case ViewType.VIEW_STATIC: 
+                break;
+
+            case ViewType.VIEW_DOLLY: 
+                break;
         }
     }
 

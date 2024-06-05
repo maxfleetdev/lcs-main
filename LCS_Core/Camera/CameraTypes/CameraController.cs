@@ -1,4 +1,3 @@
-using NaughtyAttributes;
 using UnityEngine;
 
 /// <summary>
@@ -7,173 +6,186 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class CameraController : MonoBehaviour
 {
-    [Header("Dynamic Camera")]
-    [SerializeField, Tag] private string targetTag;
-    [SerializeField] private LayerMask obstacleLayer;
-    [SerializeField] private float smoothSpeed = 0.125f;
-    [SerializeField] private float collisionRadius = 0.5f;
-    [SerializeField] private float lookAheadFactor = 1.5f;
+    #region OLD
+/*
+[Header("Dynamic Camera")]
+[SerializeField, Tag] private string targetTag;
+[SerializeField] private LayerMask obstacleLayer;
+[SerializeField] private float positionSpeed = 0.125f;
+[SerializeField] private float rotationSpeed = 0.125f;
+[SerializeField] private float collisionRadius = 0.5f;
+[SerializeField] private float lookAheadFactor = 1.5f;
 
-    [Header("Input")]
-    [SerializeField] private InputData inputData;
+[Header("Input")]
+[SerializeField] private InputData inputData;
 
-    // Transforms
-    private Transform cameraTarget = null;
-    private Transform cameraPosition = null;
-    private Transform previousPosition = null;          // just in-case
+// Transforms
+private Transform cameraTarget = null;
+private Transform cameraPosition = null;
 
-    // Positioning
-    private Vector3 targetOffset = new Vector3(0, 0, 0.5f);     // targets front of player
-    private Vector3 followOffset = new Vector3(0, 3f, -4f);     // make dynamic
-    private Vector3 targetPosition;
+// Positioning
+private Vector3 targetOffset = new Vector3(0, 0, 0.5f);
+private Vector3 followOffset = new Vector3(0, 3f, -3f);
+private Vector3 targetPosition;
 
-    // From SceneCamera
-    private ViewType currentType;
+// From SceneCamera
+private ViewType currentType;
 
-    // For dynamically updating view
-    private bool updateCamera = false;
-    private bool targetVisible = false;
+private float targetLookAheadFactor;
 
-    #region Runtime
+// For dynamically updating view
+private bool updateCamera = false;
+private bool targetVisible = false;
 
-    private void Update()
-    {
-        // make more effecient and modular
-        if (!updateCamera) return;
-        AdjustCameraRotation();
-        if (currentType == ViewType.VIEW_FOLLOW)
-        {
-            AdjustCameraPosition();
-        }
-    }
+#region Runtime
 
-    #endregion
+private void Update()
+{
+GetCurrentLookat();
 
-    #region Activation
+// make more effecient and modular
+if (!updateCamera) return;
+AdjustCameraRotation();
+if (currentType == ViewType.VIEW_FOLLOW)
+{
+    AdjustCameraPosition();
+}
+}
 
-    public void SetupController(Transform view_target)
-    {
-        cameraTarget = view_target;
-        inputData.FaceDirectionStart += ChangeFacingDirection;
-        inputData.FaceDirectionEnd += ReturnFacingDirection;
-    }
+#endregion
 
-    public void SwitchView(ViewType type, Transform position)
-    {
-        currentType = type;
-        cameraPosition = position;
-        currentType = type;
-        previousPosition = transform;
-        switch (currentType)
-        {
-            case ViewType.VIEW_LOOKAT:
-                LookAtView();
-                break;
+#region Activation
 
-            case ViewType.VIEW_STATIC:
-                StaticView();
-                break;
+public void SetupController(Transform view_target)
+{
+cameraTarget = view_target;
+inputData.FaceDirectionStart += ChangeFacingDirection;
+inputData.FaceDirectionEnd += ReturnFacingDirection;
+}
 
-            case ViewType.VIEW_FOLLOW:
-                FollowView();
-                break;
-        }
-        Debugger.LogConsole($"Camera: {type}, {position}", 0);
-    }
+public void SwitchView(ViewType type, Transform position)
+{
+currentType = type;
+cameraPosition = position;
+currentType = type;
+switch (currentType)
+{
+    case ViewType.VIEW_LOOKAT:
+        LookAtView();
+        break;
 
-    #endregion
+    case ViewType.VIEW_STATIC:
+        StaticView();
+        break;
 
-    #region View Logic
+    case ViewType.VIEW_FOLLOW:
+        FollowView();
+        break;
+}
+Debugger.LogConsole($"Camera: {type}, {position}", 0);
+}
 
-    private void LookAtView()
-    {
-        // Setup Transforms for Camera Positioning
-        transform.position = cameraPosition.position;
-        transform.rotation = cameraPosition.rotation;
-        updateCamera = true;
-    }
+#endregion
 
-    private void StaticView()
-    {
-        // Setup Transforms for Camera Positioning
-        transform.position = cameraPosition.position;
-        transform.rotation = cameraPosition.rotation;
-        updateCamera = false;
-    }
+#region View Logic
 
-    private void FollowView()
-    {
-        updateCamera = true;
-    }
+private void LookAtView()
+{
+// Setup Transforms for Camera Positioning
+transform.position = cameraPosition.position;
+transform.rotation = cameraPosition.rotation;
+updateCamera = true;
+}
 
-    #endregion
+private void StaticView()
+{
+// Setup Transforms for Camera Positioning
+transform.position = cameraPosition.position;
+transform.rotation = cameraPosition.rotation;
+updateCamera = false;
+}
 
-    #region Dynamic View
+private void FollowView()
+{
+updateCamera = true;
+}
 
-    // Changes current facing direction to the targets forward direction
-    private void ChangeFacingDirection()
-    {
-        Vector3 target_front = cameraTarget.forward;
-    }
+#endregion
 
-    // Returns or cancels the direction to default
-    private void ReturnFacingDirection()
-    {
-        
-    }
+#region Dynamic View
 
-    private void AdjustCameraRotation()
-    {
+private void ChangeFacingDirection()
+{
+targetLookAheadFactor = 1.5f;
+}
 
-        // Calculate target position with look-ahead
-        Vector3 lookAheadPosition = cameraTarget.position + (cameraTarget.forward * lookAheadFactor);
-        targetPosition = lookAheadPosition + (cameraTarget.rotation * targetOffset);
-        transform.LookAt(targetPosition);
-    }
+private void ReturnFacingDirection()
+{
+targetLookAheadFactor = 0f;
+}
 
-    private void AdjustCameraPosition()
-    {
-        // Desired position with offset
-        Vector3 desiredPosition = cameraTarget.position + followOffset;
-        Vector3 direction = desiredPosition - cameraTarget.position;
-        float distance = direction.magnitude;
+private void GetCurrentLookat()
+{
+Vector3 direction = cameraTarget.TransformDirection(Vector3.forward);
+Debug.DrawRay(cameraTarget.position, direction * 10f, Color.blue);
+}
 
-        // Check for obstacles
-        Ray detectRay = new Ray(cameraTarget.position, direction);
-        RaycastHit hit;
+private void AdjustCameraRotation()
+{
+// Calculate target position with look-ahead
+Vector3 lookAheadPosition = cameraTarget.position + (cameraTarget.forward * lookAheadFactor);
+targetPosition = lookAheadPosition + (cameraTarget.rotation * targetOffset);
+transform.LookAt(targetPosition);
 
-        if (Physics.Raycast(detectRay, out hit, distance, obstacleLayer))
-        {
-            Vector3 adjustedPosition = hit.point - direction.normalized * collisionRadius;
-            transform.position = Vector3.Lerp(transform.position, adjustedPosition, smoothSpeed * Time.deltaTime);
-            targetVisible = false;
-        }
-        else
-        {
-            // Move to the desired position smoothly
-            transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
-            targetVisible = true;
-        }
-    }
+// Smoothly adjust LookAhead
+lookAheadFactor = Mathf.Lerp(lookAheadFactor, targetLookAheadFactor, rotationSpeed * Time.deltaTime);
+if (lookAheadFactor <= 0.01f)
+    lookAheadFactor = 0f;
+}
 
-    #endregion
+private void AdjustCameraPosition()
+{
+// Desired position with offset
+Vector3 desired_pos = cameraTarget.position + followOffset;
+Vector3 direction = desired_pos - cameraTarget.position;
+float distance = direction.magnitude;
 
-    #region Debugging
+// Check for obstacles
+Ray detect_ray = new Ray(cameraTarget.position, direction);
+RaycastHit hit;
+if (Physics.Raycast(detect_ray, out hit, distance, obstacleLayer))
+{
+    Vector3 adjusted_pos = hit.point - direction.normalized * collisionRadius;
+    transform.position = Vector3.Lerp(transform.position, adjusted_pos, positionSpeed * Time.deltaTime);
+    targetVisible = false;
+}
+else
+{
+    transform.position = Vector3.Lerp(transform.position, desired_pos, positionSpeed * Time.deltaTime);
+    targetVisible = true;
+}
+}
 
-    private void OnDrawGizmos()
-    {
-        if (cameraTarget == null) return;
-        // Target
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(targetPosition, 0.1f);
+#endregion
 
-        // Ray
-        Gizmos.color = targetVisible ? Color.green : Color.red;
-        Vector3 desiredPosition = cameraTarget.position + followOffset;
-        Vector3 direction = desiredPosition - cameraTarget.position;
-        float distance = direction.magnitude;
-        Gizmos.DrawRay(cameraTarget.position, direction * distance);
-    }
+#region Debugging
 
-    #endregion
+private void OnDrawGizmos()
+{
+if (cameraTarget == null) return;
+// Target
+Gizmos.color = Color.yellow;
+Gizmos.DrawSphere(targetPosition, 0.1f);
+
+// Ray
+Gizmos.color = targetVisible ? Color.green : Color.red;
+Vector3 desiredPosition = cameraTarget.position + followOffset;
+Vector3 direction = desiredPosition - cameraTarget.position;
+float distance = direction.magnitude;
+Gizmos.DrawRay(cameraTarget.position, direction * distance);
+}
+
+#endregion
+*/
+#endregion
 }

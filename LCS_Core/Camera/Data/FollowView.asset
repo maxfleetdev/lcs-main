@@ -13,5 +13,10 @@ MonoBehaviour:
   m_Name: FollowView
   m_EditorClassIdentifier: 
   CameraViewType: 0
-  TrackTarget: 0
-  test: 0
+  FadeType: 1
+  TrackTarget: 1
+  FocusOnPOI: 1
+  AllowLookahead: 1
+  AvoidObstacles: 0
+  Spline:
+    Points: []

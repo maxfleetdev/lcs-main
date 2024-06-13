@@ -10,9 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 589ade7140d17cc4b88b342c2a84fd01, type: 3}
-  m_Name: SplineView
+  m_Name: PathView
   m_EditorClassIdentifier: 
-  CameraViewType: 2
+  CameraViewType: 4
+  FadeType: 0
   TrackTarget: 1
   FocusOnPOI: 0
-  SplinePoints: []
+  AllowLookahead: 1
+  AvoidObstacles: 0
+  Path: {x: 0, y: 0, z: 0}

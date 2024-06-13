@@ -4,5 +4,6 @@ public enum ViewType
     VIEW_TRACKING, 
     VIEW_STATIC,   
     VIEW_SPLINE,
+    VIEW_PATH,
     VIEW_DYNAMIC
 }

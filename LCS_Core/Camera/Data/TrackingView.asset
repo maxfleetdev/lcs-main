@@ -13,3 +13,10 @@ MonoBehaviour:
   m_Name: TrackingView
   m_EditorClassIdentifier: 
   CameraViewType: 1
+  FadeType: 0
+  TrackTarget: 1
+  FocusOnPOI: 0
+  AllowLookahead: 1
+  AvoidObstacles: 0
+  Spline:
+    Points: []

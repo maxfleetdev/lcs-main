@@ -8,6 +8,13 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
 {
     [SerializeField] private CameraData cameraData;
     [SerializeField] private BoxTrigger trigger;
+    [Space]
+    // Find bertter way to show this info
+    [SerializeField] private bool pathRequired = false;
+    [SerializeField, EnableIf("pathRequired")] private CameraPath cameraPath = null;
+
+    // For Inspector
+    [Space]
     [ShowNonSerializedField] private int cameraID = -1;
     [ShowNonSerializedField] private bool cameraActive;
 
@@ -26,22 +33,33 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
 
     private void Start()
     {
+        // Null Checks
         if (cameraID == -1)
         {
-            Debugger.LogConsole("Camera not Initialised", 0, this);
+            Debugger.LogConsole("Camera not Initialised", 2, this);
+            this.enabled = false;
+            return;
+        }
+        if (cameraData == null)
+        {
+            Debugger.LogConsole("No CameraData Detected", 2, this);
+            this.enabled = false;
+            return;
+        }
+        if (cameraData.CameraViewType == ViewType.VIEW_PATH && cameraPath == null)
+        {
+            Debugger.LogConsole("No CameraPath Detected", 2, this);
+            this.enabled = false;
             return;
         }
 
-        if (cameraData == null)
-        {
-            Debugger.LogConsole("No CameraData Detected", 0, this);
-            return;
-        }
+        // Assign to OnTrigger event
         trigger.OnTriggerCalled += EnteredCamera;
     }
 
     private void OnDisable()
     {
+        // Unassign to OnTrigger event
         trigger.OnTriggerCalled -= EnteredCamera;
     }
 
@@ -75,4 +93,6 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
     }
 
     #endregion
+
+    public CameraPath GetPath() => cameraPath;
 }

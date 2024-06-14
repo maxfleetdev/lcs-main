@@ -4,7 +4,7 @@ using UnityEngine;
 /// Main Controller for handling the camera in-game. Can switch on the fly from Static to lookat
 /// </summary>
 [RequireComponent(typeof(Camera))]
-public class CameraController : MonoBehaviour
+public class OLDCameraController : MonoBehaviour
 {
     #region OLD
 /*

@@ -33,10 +33,7 @@ public class InputData : ScriptableObject, MainControls.IGameplayActions, MainCo
 
     public void Remove()
     {
-        if (mainControls != null)
-        {
-            mainControls.Gameplay.Disable();
-        }
+        mainControls?.Gameplay.Disable();
     }
 
     #endregion

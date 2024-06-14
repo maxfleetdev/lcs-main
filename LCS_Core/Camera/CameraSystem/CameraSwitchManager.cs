@@ -3,13 +3,13 @@ using UnityEngine;
 /// <summary>
 /// Used as a manager for switching Cameras, does not actually control movement. Listens to CameraHandler.
 /// </summary>
-[RequireComponent(typeof(DynamicCameraController))]
+[RequireComponent(typeof(CameraController))]
 public class CameraSwitchManager : MonoBehaviour
 {
     // Camera Switching
     private SceneCamera activeCamera = null;
     private CameraData currentCameraData;
-    private DynamicCameraController controller = null;
+    private CameraController controller = null;
     private ViewType currentViewType;
 
     #region Startup
@@ -37,8 +37,7 @@ public class CameraSwitchManager : MonoBehaviour
         CameraCache.CacheCameras(cameras);
         
         // Camera Controller
-        controller = GetComponent<DynamicCameraController>();
-        controller.SetTarget(PlayerCache.PlayerTransform);
+        controller = GetComponent<CameraController>();
     }
 
     #endregion
@@ -67,17 +66,18 @@ public class CameraSwitchManager : MonoBehaviour
         currentViewType = currentCameraData.CameraViewType;
 
         // Switches the current camera view
-        SwitchView();
+        UpdateView();
     }
 
     #endregion
 
     #region View Change
 
-    private void SwitchView()
+    // Called when new camera has been activated
+    private void UpdateView()
     {
-        if (activeCamera == null) return;
-        controller.ViewChanged(currentViewType, activeCamera);
+        if (activeCamera == null || controller == null) return;
+        controller.UpdateCameraBehaviour(currentViewType, activeCamera);
     }
 
     #endregion
@@ -87,7 +87,7 @@ public class CameraSwitchManager : MonoBehaviour
     private void RefreshNewView(ViewType viewType)
     {
         currentViewType = viewType;
-        SwitchView();
+        UpdateView();
     }
 
     #endregion

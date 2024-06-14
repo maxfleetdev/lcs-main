@@ -11,7 +11,7 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
     [Space]
     // Find bertter way to show this info
     [SerializeField] private bool pathRequired = false;
-    [SerializeField, EnableIf("pathRequired")] private CameraPath cameraPath = null;
+    [SerializeField, EnableIf("pathRequired")] private BezierSpline splinePath = null;
 
     // For Inspector
     [Space]
@@ -46,7 +46,8 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
             this.enabled = false;
             return;
         }
-        if (cameraData.CameraViewType == ViewType.VIEW_PATH && cameraPath == null)
+        //if (cameraData.CameraViewType == ViewType.VIEW_PATH && cameraPath == null)
+        if (cameraData.CameraViewType == ViewType.VIEW_PATH)
         {
             Debugger.LogConsole("No CameraPath Detected", 2, this);
             this.enabled = false;
@@ -94,5 +95,5 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
 
     #endregion
 
-    public CameraPath GetPath() => cameraPath;
+    public BezierSpline GetPath() => splinePath;
 }

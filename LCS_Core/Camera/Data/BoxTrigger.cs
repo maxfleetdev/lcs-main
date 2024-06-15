@@ -14,8 +14,8 @@ public class BoxTrigger : MonoBehaviour
     private Vector3 boxSize;
 
     // Trigger Events
-    public event Action OnTriggerCalled;
-    public event Action OnExitCalled;
+    public event Action<bool> OnTriggerCalled;
+    public event Action<bool> OnExitCalled;
 
     #region Triggers
 
@@ -23,7 +23,7 @@ public class BoxTrigger : MonoBehaviour
     {
         if (other.tag == objectTag)
         {
-            OnTriggerCalled?.Invoke();
+            OnTriggerCalled?.Invoke(callOnExit);
         }
     }
 
@@ -31,7 +31,7 @@ public class BoxTrigger : MonoBehaviour
     {
         if (other.tag == objectTag && callOnExit)
         {
-            OnExitCalled?.Invoke();
+            OnExitCalled?.Invoke(true);
         }
     }
 

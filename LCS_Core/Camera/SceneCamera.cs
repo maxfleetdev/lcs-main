@@ -9,19 +9,14 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
     [SerializeField] private CameraData cameraData;
     [SerializeField] private BoxTrigger trigger;
     [Space]
-    // Find bertter way to show this info
-    [SerializeField] private bool pathRequired = false;
-    [SerializeField, EnableIf("pathRequired")] private BezierSpline splinePath = null;
-
-    // For Inspector
-    [Space]
     [ShowNonSerializedField] private int cameraID = -1;
     [ShowNonSerializedField] private bool cameraActive;
 
-    public Transform TargetTransform 
-    { 
+    // Public Properties
+    public Transform TargetTransform
+    {
         get { return transform; }
-        private set { } 
+        private set { }
     }
     public CameraData CameraData
     {
@@ -46,22 +41,16 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
             this.enabled = false;
             return;
         }
-        //if (cameraData.CameraViewType == ViewType.VIEW_PATH && cameraPath == null)
-        if (cameraData.CameraViewType == ViewType.VIEW_PATH)
-        {
-            Debugger.LogConsole("No CameraPath Detected", 2, this);
-            this.enabled = false;
-            return;
-        }
-
         // Assign to OnTrigger event
         trigger.OnTriggerCalled += EnteredCamera;
+        trigger.OnExitCalled += ExitCamera;
     }
 
     private void OnDisable()
     {
         // Unassign to OnTrigger event
         trigger.OnTriggerCalled -= EnteredCamera;
+        trigger.OnExitCalled -= ExitCamera;
     }
 
     public void InitialiseCamera(int id)
@@ -73,27 +62,17 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
 
     #region Activation
 
-    private void EnteredCamera()
+    // Called when entering trigger volume
+    private void EnteredCamera(bool nested)
     {
-        if (!cameraActive)
-        {
-            CameraSwitchHandler.ActivateCamera(cameraID);
-        }
+        CameraSwitchHandler.ActivateCamera(cameraID, nested);
     }
 
-    public void ActivateCamera()
+    // Called when exiting trigger volume
+    private void ExitCamera(bool nested)
     {
-        cameraActive = true;
-        // activates this SceneCamera to the ViewManager
-    }
-
-    public void DeactivateCamera()
-    {
-        cameraActive = false;
-        // deactivates this SceneCamera to the ViewManager
+        CameraSwitchHandler.DeactivateCamera(cameraID);
     }
 
     #endregion
-
-    public BezierSpline GetPath() => splinePath;
 }

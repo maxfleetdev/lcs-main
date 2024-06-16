@@ -9,6 +9,7 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
     [SerializeField] private CameraData cameraData;
     [SerializeField] private BoxTrigger trigger;
     [SerializeField] private CameraBounds bounds;
+    [SerializeField] private Transform staticLookat;
     [Space]
     [ShowNonSerializedField] private int cameraID = -1;
 
@@ -73,4 +74,5 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
     public CameraData GetData() => cameraData;
     public CameraBounds GetBounds() => bounds;
     public Transform GetTransform() => transform;
+    public Transform GetLookat() => staticLookat;
 }

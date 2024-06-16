@@ -20,6 +20,8 @@ public class CameraBounds : MonoBehaviour
 
     #region Debug
 
+    #if UNITY_EDITOR
+
     private void OnDrawGizmos()
     {
         if (boxCollider == null)
@@ -58,7 +60,9 @@ public class CameraBounds : MonoBehaviour
         Gizmos.DrawSphere(world_pos, 0.05f);
     }
 
-    #endregion
+#endif
+
+#endregion
 
     public Vector3 GetCenter() => boxCollider.center;
     public Vector3 GetSize() => boxCollider.size;

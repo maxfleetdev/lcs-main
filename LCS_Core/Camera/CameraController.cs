@@ -2,19 +2,21 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private InputData inputData;       // Used for looking
+    [SerializeField] private InputData inputData;
 
     private SceneCamera activeCamera = null;
     private CameraData currentData = null;
     private CameraBounds currentBound = null;
     private Transform target = null;
 
+    // Camera Offsets & Misc
     private Vector3 lookaheadTarget = Vector3.zero;
     private readonly float minDistance = 3f;
     private float lookaheadDistance = 0.5f;
-    private readonly float moveSmoothTime = 0.25f;
-    private readonly float lookSmoothTime = 6f;
+    private readonly float moveSmoothTime = 0.45f;
+    private readonly float lookSmoothTime = 4f;
 
+    // Camera Bounds
     private Vector3 BoundMin;
     private Vector3 BoundMax;
     private float[] MinBounds;
@@ -25,15 +27,15 @@ public class CameraController : MonoBehaviour
     private void OnEnable()
     {
         CameraSwitchHandler.OnCameraChanged += CameraChanged;
-        inputData.AimStartEvent += AimDetected;
-        inputData.AimEndEvent += AimDetected;
+        inputData.AimStartEvent += AimStart;
+        inputData.AimEndEvent += AimEnd;
     }
 
     private void OnDisable()
     {
         CameraSwitchHandler.OnCameraChanged -= CameraChanged;
-        inputData.AimStartEvent -= AimDetected;
-        inputData.AimEndEvent -= AimDetected;
+        inputData.AimStartEvent -= AimStart;
+        inputData.AimEndEvent -= AimEnd;
     }
 
     #endregion
@@ -53,6 +55,12 @@ public class CameraController : MonoBehaviour
         // Targetting
         target = PlayerCache.PlayerTransform;
         SetConstraints();
+
+        // Set Static
+        if (currentData.CameraViewType == ViewType.VIEW_STATIC)
+        {
+            StaticCamera();
+        }
     }
 
     // Must be called before applying camera
@@ -65,20 +73,25 @@ public class CameraController : MonoBehaviour
         BoundMax = currentBound.transform.TransformPoint(center + size / 2);
         MinBounds = new float[] { BoundMin.x, BoundMin.y, BoundMin.z };
         MaxBounds = new float[] { BoundMax.x, BoundMax.y, BoundMax.z };
+        aiming = false;
     }
 
     #endregion
 
     #region Input
 
-    bool detected = false;
-    private void AimDetected()
+    bool aiming = false;
+    private void AimStart()
     {
-        detected = !detected;
-        if (detected)
-            lookaheadDistance = 6f;
-        else
-            lookaheadDistance = 0.5f;
+        if (!currentData.AllowLookahead) return;
+        aiming = true;
+        lookaheadDistance = 6f;
+    }
+
+    private void AimEnd()
+    {
+        aiming = false;
+        lookaheadDistance = 0.5f;
     }
 
     #endregion
@@ -87,6 +100,8 @@ public class CameraController : MonoBehaviour
 
     private void LookatOffset()
     {
+        // target.up * (x) determines the height of where the camera will look at. Higher = camera will face front
+        // lower = camera will face back. idk why but it just does
         lookaheadTarget = target.position + ((target.forward * lookaheadDistance) + (target.up * 0.55f));
         Quaternion target_rotation = Quaternion.LookRotation(lookaheadTarget - transform.position);
         transform.rotation = Quaternion.Slerp(transform.rotation, target_rotation, lookSmoothTime * Time.deltaTime);
@@ -135,9 +150,19 @@ public class CameraController : MonoBehaviour
     {
         if (currentBound != null || target != null)
         {
-            LookatOffset();
+            if (currentData.CameraViewType == ViewType.VIEW_STATIC)
+            {
+                return;
+            }
             ConstrainCamera();
+            LookatOffset();
         }
+    }
+
+    private void StaticCamera()
+    {
+        transform.LookAt(activeCamera.GetLookat());
+        transform.position = currentBound.transform.position;
     }
 
     #endregion
@@ -149,5 +174,6 @@ public class CameraController : MonoBehaviour
         Gizmos.DrawWireCube(lookaheadTarget, new Vector3(0.075f, 0.075f, 0.075f));
         Gizmos.color = Color.cyan;
         Gizmos.DrawSphere(wishPosition, 0.08f);
+        Gizmos.DrawLine(transform.position, wishPosition);
     }
 }

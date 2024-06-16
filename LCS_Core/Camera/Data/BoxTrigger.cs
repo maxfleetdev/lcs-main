@@ -24,7 +24,7 @@ public class BoxTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == objectTag)
+        if (other.CompareTag(objectTag))
         {
             OnTriggerCalled?.Invoke(nestedTrigger);
         }
@@ -32,7 +32,7 @@ public class BoxTrigger : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag == objectTag && nestedTrigger)
+        if (other.CompareTag(objectTag) && nestedTrigger)
         {
             OnExitCalled?.Invoke(true);
         }

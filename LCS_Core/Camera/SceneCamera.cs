@@ -8,20 +8,9 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
 {
     [SerializeField] private CameraData cameraData;
     [SerializeField] private BoxTrigger trigger;
+    [SerializeField] private CameraBounds bounds;
     [Space]
     [ShowNonSerializedField] private int cameraID = -1;
-
-    // Public Properties
-    public Transform TargetTransform
-    {
-        get { return transform; }
-        private set { }
-    }
-    public CameraData CameraData
-    {
-        get => cameraData;
-        private set => cameraData = value;
-    }
 
     #region Startup
 
@@ -37,6 +26,12 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
         if (cameraData == null)
         {
             Debugger.LogConsole("No CameraData Detected", 2, this);
+            this.enabled = false;
+            return;
+        }
+        if (bounds == null)
+        {
+            Debugger.LogConsole("No Bounds Assigned!", 2, this);
             this.enabled = false;
             return;
         }
@@ -74,4 +69,8 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
     }
 
     #endregion
+
+    public CameraData GetData() => cameraData;
+    public CameraBounds GetBounds() => bounds;
+    public Transform GetTransform() => transform;
 }

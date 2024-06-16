@@ -7,8 +7,8 @@ using UnityEngine;
 /// </summary>
 public class CameraManager : MonoBehaviour
 {
-    private SceneCamera activeCamera = null;
-    private List<int> activeCameras = new List<int>();
+    // Dynamic Camera List
+    private readonly List<int> activeCameras = new List<int>();
 
     #region Startup
 
@@ -39,6 +39,8 @@ public class CameraManager : MonoBehaviour
     {
         if (CameraCache.GetCamera(id) != null && !activeCameras.Contains(id))
         {
+            // If main camera, clear cameralist and make this ID the active main camera
+            // Otherwise, just add to the cameralist
             if (!nested)
             {
                 activeCameras.Clear();
@@ -62,15 +64,11 @@ public class CameraManager : MonoBehaviour
         if (activeCameras.Count == 0)
         {
             Debugger.LogConsole("No Active Camera!", 1);
-            activeCamera = null;
             return;
         }
-        int active_id = activeCameras[activeCameras.Count - 1];
-        activeCamera = CameraCache.GetCamera(active_id);
-
-        // TEST
-        Camera.main.transform.position = activeCamera.transform.position;
-        Camera.main.transform.rotation = activeCamera.transform.rotation;
+        // Makes the most recently added camera the active camera via CameraHandler
+        int active_id = activeCameras[^1];
+        CameraSwitchHandler.CameraChanged(active_id);
     }
 
     #endregion

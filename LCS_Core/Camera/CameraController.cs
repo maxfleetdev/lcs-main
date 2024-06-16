@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private InputData inputData;
+    [SerializeField] private InputData inputData;       // Used for looking
 
     private SceneCamera activeCamera = null;
     private CameraData currentData = null;
@@ -12,7 +12,8 @@ public class CameraController : MonoBehaviour
     private Vector3 lookaheadTarget = Vector3.zero;
     private readonly float minDistance = 3f;
     private float lookaheadDistance = 0.5f;
-    private readonly float smoothTime = 0.25f;
+    private readonly float moveSmoothTime = 0.25f;
+    private readonly float lookSmoothTime = 6f;
 
     private Vector3 BoundMin;
     private Vector3 BoundMax;
@@ -75,7 +76,7 @@ public class CameraController : MonoBehaviour
     {
         detected = !detected;
         if (detected)
-            lookaheadDistance = 4f;
+            lookaheadDistance = 6f;
         else
             lookaheadDistance = 0.5f;
     }
@@ -86,9 +87,9 @@ public class CameraController : MonoBehaviour
 
     private void LookatOffset()
     {
-        lookaheadTarget = target.position + (target.forward * lookaheadDistance);
+        lookaheadTarget = target.position + ((target.forward * lookaheadDistance) + (target.up * 0.55f));
         Quaternion target_rotation = Quaternion.LookRotation(lookaheadTarget - transform.position);
-        transform.rotation = Quaternion.Slerp(transform.rotation, target_rotation, 6f * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, target_rotation, lookSmoothTime * Time.deltaTime);
     }
 
     private Vector3 velocity;
@@ -108,8 +109,9 @@ public class CameraController : MonoBehaviour
         float player_dist = Vector3.Distance(transform.position, target.position);
         if (player_dist < minDistance)
         {
-            Vector3 move_pos = transform.position - target.position;
-            constrained_pos += move_pos.normalized * (minDistance - player_dist);
+            // Calculate upward movement based on camera-to-player direction
+            Vector3 move_dir = (transform.position - target.position).normalized;
+            constrained_pos += move_dir * (minDistance - player_dist);
         }
 
         // Loop through each axis
@@ -124,9 +126,9 @@ public class CameraController : MonoBehaviour
         constrained_pos.x = constrained_pos_a[0];
         constrained_pos.y = constrained_pos_a[1];
         constrained_pos.z = constrained_pos_a[2];
+        
         // Final Position
-        transform.position = Vector3.SmoothDamp(transform.position, 
-            constrained_pos, ref velocity, smoothTime);
+        transform.position = Vector3.SmoothDamp(transform.position, constrained_pos, ref velocity, moveSmoothTime);
     }
 
     private void Update()

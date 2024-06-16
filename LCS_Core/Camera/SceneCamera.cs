@@ -10,7 +10,6 @@ public class SceneCamera : MonoBehaviour, ISceneCamera
     [SerializeField] private BoxTrigger trigger;
     [Space]
     [ShowNonSerializedField] private int cameraID = -1;
-    [ShowNonSerializedField] private bool cameraActive;
 
     // Public Properties
     public Transform TargetTransform

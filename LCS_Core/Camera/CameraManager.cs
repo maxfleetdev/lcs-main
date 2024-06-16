@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Controls which SceneCamera to active depending on their BoxTrigger conditions. Stores ID's in a dynamic
+/// Controls which SceneCamera to active depending on their Trigger conditions. Stores ID's in a dynamic
 /// list.
 /// </summary>
 public class CameraManager : MonoBehaviour

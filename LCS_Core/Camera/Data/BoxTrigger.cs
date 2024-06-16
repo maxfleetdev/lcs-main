@@ -1,12 +1,15 @@
 using NaughtyAttributes;
 using System;
+using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
 public class BoxTrigger : MonoBehaviour
 {
     [SerializeField, Tag] private string objectTag;
-    [SerializeField] private bool callOnExit = false;
+    [SerializeField] 
+    [Tooltip("Acts as a secondary trigger (when another trigger is active)")]
+    private bool nestedTrigger = false;
     [Space]
     [SerializeField] private bool debug = true;
     [SerializeField, ShowIf("debug")] private Color debugColor;
@@ -23,13 +26,13 @@ public class BoxTrigger : MonoBehaviour
     {
         if (other.tag == objectTag)
         {
-            OnTriggerCalled?.Invoke(callOnExit);
+            OnTriggerCalled?.Invoke(nestedTrigger);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag == objectTag && callOnExit)
+        if (other.tag == objectTag && nestedTrigger)
         {
             OnExitCalled?.Invoke(true);
         }
@@ -47,6 +50,12 @@ public class BoxTrigger : MonoBehaviour
             boxSize = GetComponent<BoxCollider>().size;
             Gizmos.color = debugColor;
             Gizmos.DrawWireCube(this.transform.position, boxSize);
+
+            if (nestedTrigger)
+            {
+                GUI.color = Color.black;
+                Handles.Label(this.transform.position, "NESTED");
+            }
         }
     }
 

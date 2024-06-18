@@ -4,28 +4,33 @@ public class CameraController : MonoBehaviour
 {
     [SerializeField] private InputData inputData;
 
+    // Active Camera Data
     private SceneCamera activeCamera = null;
     private CameraData currentData = null;
     private CameraBounds currentBound = null;
     private Transform target = null;
+    private Transform camTransform;
 
     // Camera Offsets & Misc
     private Vector3 lookaheadTarget = Vector3.zero;
     private readonly float minDistance = 3f;
     private float lookaheadDistance = 0.5f;
-    private readonly float moveSmoothTime = 0.45f;
-    private readonly float lookSmoothTime = 4f;
+    private readonly float lerpTime = 7f;
 
     // Camera Bounds
-    private Vector3 BoundMin;
-    private Vector3 BoundMax;
-    private float[] MinBounds;
-    private float[] MaxBounds;
+    private Vector3 boundMin;
+    private Vector3 boundMax;
+    private float[] minBounds;
+    private float[] maxBounds;
+
+    // Camera Positioning
+    private Vector3 wishPosition;
 
     #region Start/Stop
 
     private void OnEnable()
     {
+        camTransform = this.transform;
         CameraSwitchHandler.OnCameraChanged += CameraChanged;
         inputData.AimStartEvent += AimStart;
         inputData.AimEndEvent += AimEnd;
@@ -69,10 +74,10 @@ public class CameraController : MonoBehaviour
         // Cache New Bounds
         Vector3 center = currentBound.GetCenter();
         Vector3 size = currentBound.GetSize();
-        BoundMin = currentBound.transform.TransformPoint(center - size / 2);
-        BoundMax = currentBound.transform.TransformPoint(center + size / 2);
-        MinBounds = new float[] { BoundMin.x, BoundMin.y, BoundMin.z };
-        MaxBounds = new float[] { BoundMax.x, BoundMax.y, BoundMax.z };
+        boundMin = currentBound.transform.TransformPoint(center - size / 2);
+        boundMax = currentBound.transform.TransformPoint(center + size / 2);
+        minBounds = new float[] { boundMin.x, boundMin.y, boundMin.z };
+        maxBounds = new float[] { boundMax.x, boundMax.y, boundMax.z };
         aiming = false;
     }
 
@@ -98,7 +103,7 @@ public class CameraController : MonoBehaviour
 
     #region Runtime
 
-    private void Update()
+    private void LateUpdate()
     {
         if (currentBound != null || target != null)
         {
@@ -113,23 +118,14 @@ public class CameraController : MonoBehaviour
 
     private void LookatOffset()
     {
-        lookaheadTarget = target.position + ((target.forward * lookaheadDistance) + (target.up * 0.55f));
-        Quaternion target_rotation = Quaternion.LookRotation(lookaheadTarget - transform.position);
-        transform.rotation = Quaternion.Slerp(transform.rotation, target_rotation, lookSmoothTime * Time.deltaTime);
+        lookaheadTarget = target.position + ((target.forward * lookaheadDistance) + (target.up * 0.7f));
+        Quaternion target_rotation = Quaternion.LookRotation(lookaheadTarget - camTransform.position);
+        camTransform.rotation = Quaternion.Lerp(camTransform.rotation, target_rotation, lerpTime * Time.deltaTime);
     }
 
-    private Vector3 GetIdealPosition()
-    {
-        Vector3 ideal_pos = target.position - transform.forward * minDistance;
-        wishPosition = ideal_pos;
-
-        return ideal_pos;
-    }
-
-    private Vector3 wishPosition;
     private void ConstrainCamera()
     {
-        // Define Positions
+        // Get best position
         Vector3 desired_position = GetIdealPosition();
         Vector3 constrained_pos = desired_position;
 
@@ -140,24 +136,34 @@ public class CameraController : MonoBehaviour
         // Loop through each axis
         for (int i = 0; i < 3; i++)
         {
-            if (cam_pos_a[i] < MinBounds[i]) 
-                constrained_pos_a[i] = MinBounds[i];
-            if (cam_pos_a[i] > MaxBounds[i]) 
-                constrained_pos_a[i] = MaxBounds[i];
+            if (cam_pos_a[i] < minBounds[i]) 
+                constrained_pos_a[i] = minBounds[i];
+            if (cam_pos_a[i] > maxBounds[i]) 
+                constrained_pos_a[i] = maxBounds[i];
         }
         // Actually bound position 
         constrained_pos.x = constrained_pos_a[0];
         constrained_pos.y = constrained_pos_a[1];
         constrained_pos.z = constrained_pos_a[2];
 
-        // Final Position
-        transform.position = Vector3.Lerp(transform.position, constrained_pos, 10f * Time.deltaTime);
+        // Final Positioning
+        if (Vector3.Distance(constrained_pos, camTransform.position) < 0.1f)
+            return;
+        camTransform.position = Vector3.Lerp(camTransform.position, constrained_pos, lerpTime * Time.deltaTime);
+    }
+
+    private Vector3 GetIdealPosition()
+    {
+        Vector3 horizontal = camTransform.forward * minDistance;
+        Vector3 ideal_pos = target.position - horizontal;
+        wishPosition = ideal_pos;
+        return ideal_pos;
     }
 
     private void StaticCamera()
     {
-        transform.LookAt(activeCamera.GetLookat());
-        transform.position = currentBound.transform.position;
+        camTransform.LookAt(activeCamera.GetLookat());
+        camTransform.position = currentBound.transform.position;
     }
 
     #endregion

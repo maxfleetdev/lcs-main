@@ -14,7 +14,7 @@ public class BoxTrigger : MonoBehaviour
     [SerializeField] private bool debug = true;
     [SerializeField, ShowIf("debug")] private Color debugColor;
     
-    private Vector3 boxSize;
+    private BoxCollider boxSize;
 
     // Trigger Events
     public event Action<bool> OnTriggerCalled;
@@ -47,9 +47,16 @@ public class BoxTrigger : MonoBehaviour
     {
         if (debug)
         {
-            boxSize = GetComponent<BoxCollider>().size;
+            boxSize = GetComponent<BoxCollider>();
             Gizmos.color = debugColor;
-            Gizmos.DrawWireCube(this.transform.position, boxSize);
+            // Apply transformations for proper scale, rotation, and position
+            Matrix4x4 rot_matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
+            Gizmos.matrix = rot_matrix;
+
+            Gizmos.DrawWireCube(boxSize.center, boxSize.size);
+
+            // Reset Gizmos matrix
+            Gizmos.matrix = Matrix4x4.identity;
 
             if (nestedTrigger)
             {

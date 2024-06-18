@@ -98,54 +98,6 @@ public class CameraController : MonoBehaviour
 
     #region Runtime
 
-    private void LookatOffset()
-    {
-        // target.up * (x) determines the height of where the camera will look at. Higher = camera will face front
-        // lower = camera will face back. idk why but it just does
-        lookaheadTarget = target.position + ((target.forward * lookaheadDistance) + (target.up * 0.55f));
-        Quaternion target_rotation = Quaternion.LookRotation(lookaheadTarget - transform.position);
-        transform.rotation = Quaternion.Slerp(transform.rotation, target_rotation, lookSmoothTime * Time.deltaTime);
-    }
-
-    private Vector3 velocity;
-    private Vector3 wishPosition;
-    private void ConstrainCamera()
-    {
-        // Define Positions
-        Vector3 desired_position = target.position - transform.forward * minDistance;
-        wishPosition = desired_position;
-        Vector3 constrained_pos = desired_position;
-
-        // Define Arrays
-        float[] cam_pos_a = { desired_position.x, desired_position.y, desired_position.z };
-        float[] constrained_pos_a = { constrained_pos.x, constrained_pos.y, constrained_pos.z };
-
-        // Check distance from player to camera
-        float player_dist = Vector3.Distance(transform.position, target.position);
-        if (player_dist < minDistance)
-        {
-            // Calculate upward movement based on camera-to-player direction
-            Vector3 move_dir = (transform.position - target.position).normalized;
-            constrained_pos += move_dir * (minDistance - player_dist);
-        }
-
-        // Loop through each axis
-        for (int i = 0; i < 3; i++)
-        {
-            if (cam_pos_a[i] < MinBounds[i]) 
-                constrained_pos_a[i] = MinBounds[i];
-            if (cam_pos_a[i] > MaxBounds[i]) 
-                constrained_pos_a[i] = MaxBounds[i];
-        }
-        // Actually bound position 
-        constrained_pos.x = constrained_pos_a[0];
-        constrained_pos.y = constrained_pos_a[1];
-        constrained_pos.z = constrained_pos_a[2];
-        
-        // Final Position
-        transform.position = Vector3.SmoothDamp(transform.position, constrained_pos, ref velocity, moveSmoothTime);
-    }
-
     private void Update()
     {
         if (currentBound != null || target != null)
@@ -159,6 +111,49 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    private void LookatOffset()
+    {
+        lookaheadTarget = target.position + ((target.forward * lookaheadDistance) + (target.up * 0.55f));
+        Quaternion target_rotation = Quaternion.LookRotation(lookaheadTarget - transform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, target_rotation, lookSmoothTime * Time.deltaTime);
+    }
+
+    private Vector3 GetIdealPosition()
+    {
+        Vector3 ideal_pos = target.position - transform.forward * minDistance;
+        wishPosition = ideal_pos;
+
+        return ideal_pos;
+    }
+
+    private Vector3 wishPosition;
+    private void ConstrainCamera()
+    {
+        // Define Positions
+        Vector3 desired_position = GetIdealPosition();
+        Vector3 constrained_pos = desired_position;
+
+        // Define Arrays
+        float[] cam_pos_a = { desired_position.x, desired_position.y, desired_position.z };
+        float[] constrained_pos_a = { constrained_pos.x, constrained_pos.y, constrained_pos.z };
+
+        // Loop through each axis
+        for (int i = 0; i < 3; i++)
+        {
+            if (cam_pos_a[i] < MinBounds[i]) 
+                constrained_pos_a[i] = MinBounds[i];
+            if (cam_pos_a[i] > MaxBounds[i]) 
+                constrained_pos_a[i] = MaxBounds[i];
+        }
+        // Actually bound position 
+        constrained_pos.x = constrained_pos_a[0];
+        constrained_pos.y = constrained_pos_a[1];
+        constrained_pos.z = constrained_pos_a[2];
+
+        // Final Position
+        transform.position = Vector3.Lerp(transform.position, constrained_pos, 10f * Time.deltaTime);
+    }
+
     private void StaticCamera()
     {
         transform.LookAt(activeCamera.GetLookat());
@@ -166,6 +161,8 @@ public class CameraController : MonoBehaviour
     }
 
     #endregion
+
+    #region Debug
 
     private void OnDrawGizmos()
     {
@@ -176,4 +173,6 @@ public class CameraController : MonoBehaviour
         Gizmos.DrawSphere(wishPosition, 0.08f);
         Gizmos.DrawLine(transform.position, wishPosition);
     }
+
+    #endregion
 }

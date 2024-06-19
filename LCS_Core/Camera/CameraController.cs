@@ -7,21 +7,19 @@ using UnityEngine.UIElements;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private InputData inputData;
-    [SerializeField] private float heightChange;
-    [SerializeField] private float horizontalChange;
 
     // Active Camera Data
     private SceneCamera activeCamera = null;
     private CameraData currentData = null;
     private CameraBounds currentBound = null;
-    private Transform target = null;
+    private Transform camTarget = null;
     private Transform camTransform;
 
     // Camera Offsets & Misc
     private Vector3 lookaheadTarget = Vector3.zero;
     private readonly float minDistance = 3f;
     private float aimLength = 1f;
-    private readonly float lerpTime = 2f;
+    private readonly float lerpTime = 4f;
 
     // Camera Bounds
     private Vector3 boundMin;
@@ -64,7 +62,7 @@ public class CameraController : MonoBehaviour
         currentBound = activeCamera.GetBounds();
         
         // Targetting
-        target = PlayerCache.PlayerTransform;
+        camTarget = PlayerCache.PlayerTransform;
         SetConstraints();
 
         // Set Static
@@ -107,11 +105,15 @@ public class CameraController : MonoBehaviour
 
     #endregion
 
+    #region Transition
+
+    #endregion
+
     #region Runtime
 
     private void LateUpdate()
     {
-        if (currentBound != null || target != null)
+        if (currentBound != null || camTarget != null)
         {
             if (currentData.CameraViewType == ViewType.VIEW_STATIC)
             {
@@ -130,60 +132,69 @@ public class CameraController : MonoBehaviour
         // > Moves back to 0 degrees eventually
     private void LookatOffset()
     {
-        float angle = 1f - (FindCameraAngle() / 180);
-        float height = (camTransform.position.y - target.position.y) * (angle * 0.6f);
-        float length = Mathf.Abs(Vector3.Distance(camTransform.position, target.position)) / 4;     // still needs changing
-        lookaheadTarget = target.position + ((target.forward * length * aimLength) + (target.up * height));
+        // Dynamic Height
+        float invert_angle = 1f - (FindCameraAngle() / 180);
+        float height = (camTransform.position.y - camTarget.position.y) * (invert_angle * 0.75f);
+
+        // Dynamic Length
+        float length = Mathf.Abs(Vector3.Distance(camTransform.position, camTarget.position)) / 4;
+
+        // Final Rotation
+        lookaheadTarget = camTarget.position + ((camTarget.forward * length * aimLength) + (camTarget.up * height));
         Quaternion target_rotation = Quaternion.LookRotation(lookaheadTarget - camTransform.position);
         camTransform.rotation = Quaternion.Lerp(camTransform.rotation, target_rotation, lerpTime * Time.deltaTime);
     }
 
     // Just constrains the camera to a set boundary
-    // TODO: Simplify & more effecient
     private void ConstrainCamera()
     {
         // Get best position
         Vector3 desired_position = GetIdealPosition();
-        Vector3 constrained_pos = desired_position;
 
-        // Define Arrays
-        float[] cam_pos_a = { desired_position.x, desired_position.y, desired_position.z };
-        float[] constrained_pos_a = { constrained_pos.x, constrained_pos.y, constrained_pos.z };
-
-        // Loop through each axis
-        for (int i = 0; i < 3; i++)
-        {
-            if (cam_pos_a[i] < minBounds[i]) 
-                constrained_pos_a[i] = minBounds[i];
-            if (cam_pos_a[i] > maxBounds[i]) 
-                constrained_pos_a[i] = maxBounds[i];
-        }
-        // Actually bound position 
-        constrained_pos.x = constrained_pos_a[0];
-        constrained_pos.y = constrained_pos_a[1];
-        constrained_pos.z = constrained_pos_a[2];
+        // Constrain the position to the bounds
+        Vector3 constrained_pos = new Vector3(
+            Mathf.Clamp(desired_position.x, minBounds[0], maxBounds[0]),
+            Mathf.Clamp(desired_position.y, minBounds[1], maxBounds[1]),
+            Mathf.Clamp(desired_position.z, minBounds[2], maxBounds[2])
+        );
 
         // Final Positioning
         if (Vector3.Distance(constrained_pos, camTransform.position) < 0.1f)
             return;
+
         camTransform.position = Vector3.Lerp(camTransform.position, constrained_pos, 4 * Time.deltaTime);
     }
 
     // Find the best position for the camera before constraining
-    // TODO: Add height adjustment, make higher when player is too close
     private Vector3 GetIdealPosition()
     {
-        Vector3 horizontal = camTransform.forward * minDistance;
-        Vector3 ideal_pos = target.position - horizontal;
+        float distance = FindCameraDistance();
+
+        // Adjust Forward
+        float z_adj = 0.5f / (distance + 1);
+        Vector3 z_pos = camTransform.forward * (z_adj + minDistance);
+        
+        // Adjust Height (By Distance)
+        float y_adj = 1 / (distance + 1);
+        y_adj = Mathf.Clamp(y_adj, 0, 1);
+        Vector3 y_pos = Vector3.up * y_adj;
+
+        // Set Final Postion
+        Vector3 ideal_pos = camTarget.position - z_pos + y_pos;
         wishPosition = ideal_pos;
         return ideal_pos;
     }
 
+    // needs to be changed w/ cameradata
     private void StaticCamera()
     {
         camTransform.LookAt(activeCamera.GetLookat());
         camTransform.position = currentBound.transform.position;
     }
+
+    #endregion
+
+    #region Utils
 
     // Finds the angle between the Camera, Player and Lookat positions (Vector2's)
     private float FindCameraAngle()
@@ -192,7 +203,7 @@ public class CameraController : MonoBehaviour
         float dot, rads, angle;
 
         // Use Vector2's to find 2D angle, instead of 3D space
-        player = new Vector2(target.position.x, target.position.z);
+        player = new Vector2(camTarget.position.x, camTarget.position.z);
         camera = new Vector2(transform.position.x, transform.position.z);
         lookat = new Vector2(lookaheadTarget.x, lookaheadTarget.z);
 
@@ -210,13 +221,27 @@ public class CameraController : MonoBehaviour
         return angle;
     }
 
+    private float FindCameraDistance()
+    {
+        float cx, cz, tx, tz;
+        // Assign Vector2
+        cx = camTransform.position.x;
+        cz = camTransform.position.z;
+        tx = camTarget.position.x;      // Maybe change to LookOffsetPosition
+        tz = camTarget.position.z;
+        // Find Distance
+        Vector2 cam = new Vector2(cx, cz);
+        Vector2 target = new Vector2(tx, tz);
+        return Vector2.Distance(cam, target);
+    }
+
     #endregion
 
     #region Debug
 
     private void OnDrawGizmos()
     {
-        if (target == null) return;
+        if (camTarget == null) return;
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(lookaheadTarget, new Vector3(0.075f, 0.075f, 0.075f));
         Gizmos.color = Color.cyan;

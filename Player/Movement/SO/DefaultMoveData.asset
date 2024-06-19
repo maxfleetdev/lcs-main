@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WalkSpeed: 2
   SprintSpeed: 3
-  RotationSpeed: 180
+  RotationSpeed: 160
   StrafeSpeed: 1.5
   Gravity: 2

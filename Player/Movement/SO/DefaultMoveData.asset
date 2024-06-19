@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DefaultMoveData
   m_EditorClassIdentifier: 
   WalkSpeed: 2
-  SprintSpeed: 4
+  SprintSpeed: 3
   RotationSpeed: 180
   StrafeSpeed: 1.5
   Gravity: 2

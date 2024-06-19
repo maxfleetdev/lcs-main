@@ -1,8 +1,14 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
+/// <summary>
+/// Dynamic Orbital Camera which moves dynamically with the player in preset camera bounds.
+/// </summary>
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private InputData inputData;
+    [SerializeField] private float heightChange;
+    [SerializeField] private float horizontalChange;
 
     // Active Camera Data
     private SceneCamera activeCamera = null;
@@ -14,8 +20,8 @@ public class CameraController : MonoBehaviour
     // Camera Offsets & Misc
     private Vector3 lookaheadTarget = Vector3.zero;
     private readonly float minDistance = 3f;
-    private float lookaheadDistance = 0.5f;
-    private readonly float lerpTime = 7f;
+    private float aimLength = 1f;
+    private readonly float lerpTime = 2f;
 
     // Camera Bounds
     private Vector3 boundMin;
@@ -88,15 +94,15 @@ public class CameraController : MonoBehaviour
     bool aiming = false;
     private void AimStart()
     {
-        if (!currentData.AllowLookahead) return;
+        if (!currentData.AllowLookahead || aiming) return;
         aiming = true;
-        lookaheadDistance = 6f;
+        aimLength = 6f;
     }
 
     private void AimEnd()
     {
         aiming = false;
-        lookaheadDistance = 0.5f;
+        aimLength = 1f;
     }
 
     #endregion
@@ -116,13 +122,24 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    // How LookOffset works:
+        // > Get angle between Camera, Player and LookOffset
+        // > Invert angle, so 0 degrees = 0, 180 degrees = 1, then use as multiplier for height (& length)
+        // > When facing camera, height increase, no more camera spinning around
+        // > Then, simply rotate towards the resting point
+        // > Moves back to 0 degrees eventually
     private void LookatOffset()
     {
-        lookaheadTarget = target.position + ((target.forward * lookaheadDistance) + (target.up * 0.7f));
+        float angle = 1f - (FindCameraAngle() / 180);
+        float height = (camTransform.position.y - target.position.y) * (angle * 0.6f);
+        float length = Mathf.Abs(Vector3.Distance(camTransform.position, target.position)) / 4;     // still needs changing
+        lookaheadTarget = target.position + ((target.forward * length * aimLength) + (target.up * height));
         Quaternion target_rotation = Quaternion.LookRotation(lookaheadTarget - camTransform.position);
         camTransform.rotation = Quaternion.Lerp(camTransform.rotation, target_rotation, lerpTime * Time.deltaTime);
     }
 
+    // Just constrains the camera to a set boundary
+    // TODO: Simplify & more effecient
     private void ConstrainCamera()
     {
         // Get best position
@@ -149,9 +166,11 @@ public class CameraController : MonoBehaviour
         // Final Positioning
         if (Vector3.Distance(constrained_pos, camTransform.position) < 0.1f)
             return;
-        camTransform.position = Vector3.Lerp(camTransform.position, constrained_pos, lerpTime * Time.deltaTime);
+        camTransform.position = Vector3.Lerp(camTransform.position, constrained_pos, 4 * Time.deltaTime);
     }
 
+    // Find the best position for the camera before constraining
+    // TODO: Add height adjustment, make higher when player is too close
     private Vector3 GetIdealPosition()
     {
         Vector3 horizontal = camTransform.forward * minDistance;
@@ -164,6 +183,31 @@ public class CameraController : MonoBehaviour
     {
         camTransform.LookAt(activeCamera.GetLookat());
         camTransform.position = currentBound.transform.position;
+    }
+
+    // Finds the angle between the Camera, Player and Lookat positions (Vector2's)
+    private float FindCameraAngle()
+    {
+        Vector2 BA, BC, player, camera, lookat;
+        float dot, rads, angle;
+
+        // Use Vector2's to find 2D angle, instead of 3D space
+        player = new Vector2(target.position.x, target.position.z);
+        camera = new Vector2(transform.position.x, transform.position.z);
+        lookat = new Vector2(lookaheadTarget.x, lookaheadTarget.z);
+
+        BA = camera - player;
+        BC = lookat - player;
+
+        BA.Normalize();
+        BC.Normalize();
+
+        // Convert from radians to degrees
+        dot = Vector2.Dot(BA, BC);
+        rads = Mathf.Acos(dot);
+        angle = rads * Mathf.Rad2Deg;
+
+        return angle;
     }
 
     #endregion

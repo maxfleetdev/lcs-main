@@ -77,7 +77,7 @@ public class EmulatorVisualManager : MonoBehaviour, ISettingsObject
     {
         // Apply to PSFX VFX
         PSX.AffineStrength      = textureWarping ? 1.0f : 0.0f;
-        PSX.VertexPrecision     = vertexWobble ? 5 : 0;
+        PSX.VertexPrecision     = vertexWobble ? 5 : 8;
         PSX.ColorDepth          = colorRange;
         PSX.EnableColorDepth    = ditherStrength == 0 ? false : true;          // only enable if dithering is on
         PSX.DitheringStrength   = Mathf.Clamp(ditherStrength, 0, 0.1f);        // ranges from 0->10

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 /// <summary>
 /// Dynamic Orbital Camera which moves dynamically with the player in preset camera bounds.
@@ -134,7 +133,7 @@ public class CameraController : MonoBehaviour
     {
         // Dynamic Height
         float invert_angle = 1f - (FindCameraAngle() / 180);
-        float height = (camTransform.position.y - camTarget.position.y) * (invert_angle * 0.75f);
+        float height = (camTransform.position.y - camTarget.position.y) * (invert_angle * 0.55f);
 
         // Dynamic Length
         float length = Mathf.Abs(Vector3.Distance(camTransform.position, camTarget.position)) / 4;

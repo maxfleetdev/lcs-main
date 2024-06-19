@@ -9,16 +9,19 @@ public class SaveFileEditor : MonoBehaviour
     [SerializeField] private GameObject saveFileButton;
     [SerializeField] private Transform contentLocation;
     [SerializeField] private NewGameDataSave newSaveData;
+
     [Header("Text Fields")]
     [SerializeField] private TextMeshProUGUI dataText;
     [SerializeField] private TextMeshProUGUI timeText;
     [SerializeField] private TextMeshProUGUI difficultyText;
     [SerializeField] private TextMeshProUGUI savedText;
+
     [Header("GUI Fields")]
     [SerializeField] private GameObject confirmationScreen;
     [SerializeField] private GameObject saveScreen;
     [Space]
     [SerializeField] private EventSystem eventSystem;
+    [SerializeField] private InputData inputData;
 
     // Cached Objects
     private GameData selectedGameData = null;
@@ -33,6 +36,11 @@ public class SaveFileEditor : MonoBehaviour
         saveScreen.SetActive(true);
         PopulateSaves();
         newSaveData.OnSubmit += NewSave;
+
+        inputData.SetUI();
+        inputData.BackGUI += CancelGUI;
+
+        TimeScaleHandler.PauseTime();
     }
 
     private void OnDisable()
@@ -51,7 +59,18 @@ public class SaveFileEditor : MonoBehaviour
             loadedObjects.Clear();
         }
         newSaveData.OnSubmit -= NewSave;
+
+        inputData.SetGameplay();
+        inputData.BackGUI -= CancelGUI;
+
+        TimeScaleHandler.ResumeTime();
     }
+
+    #endregion
+
+    #region Input
+
+    private void CancelGUI() => GUIHandler.HideGUI();
 
     #endregion
 

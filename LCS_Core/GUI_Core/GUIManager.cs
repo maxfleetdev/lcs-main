@@ -16,6 +16,7 @@ namespace LCS
             [SerializeField] private GameObject debugGUI;
             [SerializeField] private GameObject pickupGUI;
             [SerializeField] private GameObject settingsGUI;
+            [SerializeField] private GameObject fadeGUI;
 
             private GameObject enabledGUI = null;
 
@@ -39,9 +40,6 @@ namespace LCS
 
             private void ShowGUI(GUIType type)
             {
-                // Start Core_GUI
-                //mainGUI.SetActive(true);
-
                 switch (type)
                 {
                     case GUIType.GUI_SAVE_GAME:
@@ -55,6 +53,9 @@ namespace LCS
                         break;
                     case GUIType.GUI_SETTINGS:
                         EnableGUIElement(settingsGUI);
+                        break;
+                    case GUIType.GUI_FADE_SCREEN:
+                        EnableGUIElement(fadeGUI);
                         break;
                     default:
                         return;

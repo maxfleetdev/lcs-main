@@ -87,6 +87,10 @@ public static class Command
                 }
                 break;
 
+            case "fade":
+                GUIHandler.ShowGUI(GUIType.GUI_FADE_SCREEN);
+                break;
+
             case "bootstrap":
                 SceneManager.LoadScene(0, LoadSceneMode.Single);
                 break;

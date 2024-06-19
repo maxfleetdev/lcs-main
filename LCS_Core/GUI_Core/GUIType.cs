@@ -13,5 +13,8 @@ public enum GUIType
 
     // MENUS
     GUI_LOAD_GAME,
-    GUI_MAIN_MENU
+    GUI_MAIN_MENU,
+
+    // VISUALS
+    GUI_FADE_SCREEN
 }

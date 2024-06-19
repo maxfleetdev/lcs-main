@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "LCS/Input")]
 public class InputData : ScriptableObject, MainControls.IGameplayActions, MainControls.IUIActions
 {
+    // Gameplay Events
     public event Action<Vector2> MoveEvent;
     public event Action<Vector2> LookEvent;
     public event Action InteractEvent;
@@ -16,6 +17,9 @@ public class InputData : ScriptableObject, MainControls.IGameplayActions, MainCo
     public event Action FaceDirectionStart;
     public event Action FaceDirectionEnd;
 
+    // GUI Events
+    public event Action BackGUI;
+
     private MainControls mainControls;
 
     #region Construct
@@ -26,6 +30,7 @@ public class InputData : ScriptableObject, MainControls.IGameplayActions, MainCo
         {
             mainControls = new MainControls();
             mainControls.Gameplay.SetCallbacks(this);
+            mainControls.UI.SetCallbacks(this);
         }
         Debugger.LogConsole("Input Initialised", 0);
         SetGameplay();
@@ -113,42 +118,45 @@ public class InputData : ScriptableObject, MainControls.IGameplayActions, MainCo
 
     public void OnCancel(InputAction.CallbackContext context)
     {
-        throw new NotImplementedException();
+        if (context.phase == InputActionPhase.Performed)
+        {
+            BackGUI?.Invoke();
+        }
     }
 
     public void OnClick(InputAction.CallbackContext context)
     {
-        throw new NotImplementedException();
+        
     }
 
     public void OnMiddleClick(InputAction.CallbackContext context)
     {
-        throw new NotImplementedException();
+        
     }
 
     public void OnNavigate(InputAction.CallbackContext context)
     {
-        throw new NotImplementedException();
+        
     }
 
     public void OnPoint(InputAction.CallbackContext context)
     {
-        throw new NotImplementedException();
+        
     }
 
     public void OnRightClick(InputAction.CallbackContext context)
     {
-        throw new NotImplementedException();
+        
     }
 
     public void OnScrollWheel(InputAction.CallbackContext context)
     {
-        throw new NotImplementedException();
+        
     }
 
     public void OnSubmit(InputAction.CallbackContext context)
     {
-        throw new NotImplementedException();
+        
     }
 
     #endregion

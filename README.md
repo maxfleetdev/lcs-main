@@ -14,10 +14,14 @@ Although older code, the architecture and principles still apply to the current 
 
 By utilising my knowledge from University, my codebase has improved immensly and performance has increased <60%. This was achieved by utilising threading, GC management and optimising systematic algorithms.
 
-## Authors
-
+## Author
 Max Fleet
-[LinkedIn](https://www.linkedin.com/in/max-w-fleet/)
-[X/Twitter](https://x.com/disratestudios)
-[Itch](https://disrate.itch.io)
-[Steam](https://store.steampowered.com/curator/42985771-Disrate-Studios/)
+
+Contact:
+* [LinkedIn](https://www.linkedin.com/in/max-w-fleet/)
+* [X/Twitter](https://x.com/disratestudios)
+* [Itch](https://disrate.itch.io)
+* [Steam](https://store.steampowered.com/curator/42985771-Disrate-Studios/)
+
+## License
+This project is licensed under the Apache License - see the LICENSE file for details
